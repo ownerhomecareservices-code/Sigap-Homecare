@@ -1,0 +1,2308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>SIGAP — Service Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css">
+<style>
+:root{
+  --navy:#1a2d5a;--navy2:#2d4a8a;--nlight:#85B7EB;
+  --teal:#0F6E56;--teal2:#E1F5EE;--teal3:#085041;
+  --blue:#185FA5;--blue2:#E6F1FB;--blue3:#0C447C;
+  --green:#3B6D11;--green2:#EAF3DE;--green3:#27500A;
+  --amber:#854F0B;--amber2:#FAEEDA;--amber3:#633806;
+  --red:#A32D2D;--red2:#FCEBEB;--red3:#501313;
+  --orange:#C45208;--orange2:#FDEBD7;
+  --purple:#3C3489;--purple2:#EEEDFE;
+  --g0:#FAFAF8;--g1:#F1EFE8;--g2:#E0DDD4;--g3:#C4C1B6;
+  --g4:#888780;--g5:#555451;--g6:#333230;--g9:#1a1a1a;
+  --rsm:6px;--rmd:10px;--rlg:14px;
+  --font:'Plus Jakarta Sans',sans-serif;
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.04);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--g1);color:var(--g9);min-height:100vh;padding-bottom:70px}
+
+/* ── App Bar ── */
+.app-bar{background:var(--navy);padding:12px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:300;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.ab-icon{width:34px;height:34px;background:var(--navy2);border-radius:var(--rmd);display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--nlight);flex-shrink:0}
+.ab-title{font-size:14px;font-weight:700;color:#fff}
+.ab-sub{font-size:10px;color:var(--nlight);margin-top:1px}
+.ab-badge{margin-left:auto;background:var(--navy2);border-radius:var(--rsm);padding:3px 9px;font-size:10px;font-weight:700;color:var(--nlight);white-space:nowrap;flex-shrink:0}
+
+.wrap{max-width:480px;margin:0 auto;padding:13px}
+
+/* ── Bottom Nav ── */
+.bot-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--g2);display:flex;z-index:200;box-shadow:0 -2px 12px rgba(0,0,0,.08)}
+.bn-btn{flex:1;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;font-family:var(--font)}
+.bn-btn i{font-size:20px;color:var(--g3)}
+.bn-btn span{font-size:10px;font-weight:600;color:var(--g4)}
+.bn-btn.active i{color:var(--navy)}
+.bn-btn.active span{color:var(--navy)}
+.bn-notif{width:7px;height:7px;background:var(--red);border-radius:50%;position:absolute;top:7px;right:calc(50% - 16px)}
+
+/* ── Screens ── */
+.scr{display:none}.scr.show{display:block}
+
+/* ── Login Screen ── */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--navy),var(--navy2));padding:24px}
+.login-card{background:#fff;border-radius:20px;padding:28px 24px;width:100%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.login-logo{text-align:center;margin-bottom:24px}
+.login-logo i{font-size:40px;color:var(--navy)}
+.login-title{font-size:22px;font-weight:700;color:var(--navy);margin-top:8px}
+.login-sub{font-size:13px;color:var(--g4);margin-top:4px}
+.role-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:20px}
+.role-btn{border:2px solid var(--g2);border-radius:var(--rlg);padding:14px;cursor:pointer;background:#fff;transition:all .15s;display:flex;align-items:center;gap:12px;font-family:var(--font)}
+.role-btn:hover{border-color:var(--navy);background:var(--blue2)}
+.role-btn.sel{border-color:var(--navy);background:var(--blue2)}
+.role-btn i{font-size:24px;color:var(--g3)}
+.role-btn.sel i{color:var(--navy)}
+.role-name{font-size:14px;font-weight:700;color:var(--g6);text-align:left}
+.role-desc{font-size:11px;color:var(--g4);text-align:left;margin-top:2px}
+.pin-wrap{margin-bottom:16px}
+.pin-label{font-size:11px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.pin-input{width:100%;background:var(--g0);border:1px solid var(--g2);border-radius:var(--rmd);padding:11px 14px;font-size:16px;color:var(--g9);font-family:var(--font);outline:none;letter-spacing:4px;text-align:center}
+.pin-input:focus{border-color:var(--navy)}
+.btn-login{width:100%;background:var(--navy);border:none;border-radius:var(--rmd);padding:13px;font-size:14px;font-weight:700;cursor:pointer;color:#fff;font-family:var(--font)}
+
+/* ── Step progress ── */
+.step-wrap{background:#fff;border-radius:var(--rlg);padding:10px 13px 8px;margin-bottom:10px;border:1px solid var(--g2);box-shadow:var(--shadow)}
+.step-dots{display:flex;gap:3px;margin-bottom:5px}
+.sdot{height:4px;border-radius:2px;flex:1;background:var(--g2);transition:background .25s}
+.sdot.done{background:var(--teal)}.sdot.active{background:var(--blue)}
+.step-info{display:flex;justify-content:space-between;align-items:center}
+.step-name{font-size:12px;font-weight:700;color:var(--g6)}
+.step-num{font-size:10px;color:var(--g4)}
+
+/* ── Tahap badge ── */
+.tahap-badge{display:flex;align-items:center;gap:8px;background:#fff;border-radius:var(--rlg);padding:10px 13px;margin-bottom:10px;border:1px solid var(--g2);box-shadow:var(--shadow)}
+.tb-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.tb-title{font-size:13px;font-weight:700;color:var(--g6)}
+.tb-sub{font-size:10px;color:var(--g4);margin-top:1px}
+.tb-status{margin-left:auto;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px}
+
+/* ── Cards ── */
+.card{background:#fff;border-radius:var(--rlg);border:1px solid var(--g2);margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow)}
+.card-hdr{padding:10px 13px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--g1);background:var(--g0)}
+.card-hdr i{font-size:15px}
+.card-hdr-t{font-size:12px;font-weight:700;color:var(--g5)}
+.card-body{padding:12px 13px;display:flex;flex-direction:column;gap:9px}
+
+/* ── Form elements ── */
+.fg{display:flex;flex-direction:column;gap:3px}
+.fl{font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.06em}
+.fl-req::after{content:' *';color:var(--red)}
+.fi{width:100%;background:var(--g0);border:1px solid var(--g2);border-radius:var(--rmd);padding:9px 11px;font-size:13px;color:var(--g9);font-family:var(--font);outline:none;transition:border-color .15s}
+.fi:focus{border-color:var(--blue);background:#fff}
+.fsel{width:100%;background:var(--g0);border:1px solid var(--g2);border-radius:var(--rmd);padding:9px 11px;font-size:13px;color:var(--g9);font-family:var(--font);outline:none}
+.fta{width:100%;background:var(--g0);border:1px solid var(--g2);border-radius:var(--rmd);padding:9px 11px;font-size:13px;color:var(--g9);font-family:var(--font);outline:none;resize:vertical;line-height:1.5}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* ── Unit & Job select ── */
+.unit-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.unit-btn{border:1.5px solid var(--g2);border-radius:var(--rlg);padding:14px 10px 11px;cursor:pointer;text-align:center;background:#fff;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:var(--shadow)}
+.unit-btn i{font-size:22px;color:var(--g3)}
+.unit-btn-name{font-size:12px;font-weight:700;color:var(--g6)}
+.unit-btn-sub{font-size:10px;color:var(--g4);line-height:1.3}
+.unit-btn.sel{border-color:var(--blue);border-width:2px;background:var(--blue2)}
+.unit-btn.sel i,.unit-btn.sel .unit-btn-name{color:var(--blue3)}
+.job-grid{display:flex;flex-direction:column;gap:6px}
+.job-btn{border:1px solid var(--g2);border-radius:var(--rmd);padding:11px 13px;cursor:pointer;background:#fff;transition:all .15s;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow)}
+.job-btn i{font-size:18px;color:var(--g3);flex-shrink:0}
+.job-btn-name{font-size:13px;font-weight:600;color:var(--g6)}
+.job-btn-desc{font-size:10px;color:var(--g4);margin-top:1px}
+.job-btn.sel{border-color:var(--teal);background:var(--teal2)}
+.job-btn.sel i,.job-btn.sel .job-btn-name{color:var(--teal3)}
+
+/* ── Checklist ── */
+.ci{display:flex;align-items:flex-start;gap:9px;padding:8px 11px;border:1px solid var(--g2);border-radius:var(--rmd);cursor:pointer;background:var(--g0);transition:all .15s;margin-bottom:5px}
+.ci.on{border-color:#5DCAA5;background:var(--teal2)}
+.ci input[type=checkbox]{width:15px;height:15px;margin-top:1px;flex-shrink:0;accent-color:var(--teal);cursor:pointer}
+.ci-text{font-size:12px;color:var(--g9);line-height:1.4}
+.ci.on .ci-text{color:var(--teal3);font-weight:500}
+
+/* ── Condition items ── */
+.cond-item{background:var(--g0);border:1px solid var(--g2);border-radius:var(--rmd);padding:9px 11px;margin-bottom:5px}
+.cond-label{font-size:12px;font-weight:600;color:var(--g9);margin-bottom:6px}
+.cond-btns{display:flex;gap:4px}
+.cb{flex:1;padding:6px 4px;border:1px solid var(--g2);border-radius:var(--rsm);font-size:10px;font-weight:700;cursor:pointer;background:#fff;color:var(--g4);font-family:var(--font);text-align:center;transition:all .15s}
+.cb.ok{background:var(--green2);border-color:#97C459;color:var(--green3)}
+.cb.warn{background:var(--amber2);border-color:#EF9F27;color:var(--amber3)}
+.cb.bad{background:var(--red2);border-color:#F09595;color:var(--red3)}
+
+/* ── Measure rows ── */
+.mr{background:var(--g0);border:1px solid var(--g2);border-radius:var(--rmd);padding:9px 11px;margin-bottom:6px}
+.mr.mr-ng{border-color:var(--red);background:var(--red2)}
+.mr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:7px}
+.mr-label{font-size:12px;font-weight:600;color:var(--g9)}
+.mr-normal{font-size:10px;color:var(--g4);margin-top:2px}
+.mr-req{color:var(--red);font-size:10px;font-weight:700}
+.mr-status{display:flex;gap:3px;flex-shrink:0}
+.ms{padding:5px 8px;border:1px solid var(--g2);border-radius:var(--rsm);font-size:10px;font-weight:700;cursor:pointer;background:#fff;color:var(--g4);font-family:var(--font);transition:all .15s}
+.ms.ok{background:var(--green2);border-color:#97C459;color:var(--green3)}
+.ms.ng{background:var(--red2);border-color:#F09595;color:var(--red3)}
+.mr input{width:100%;background:#fff;border:1px solid var(--g2);border-radius:var(--rsm);padding:7px 10px;font-size:12px;color:var(--g9);font-family:var(--font);outline:none}
+.mr.mr-ng input{background:var(--red2)}
+
+/* ── Before/After compare ── */
+.ba-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ba-box{background:var(--g0);border:1px solid var(--g2);border-radius:var(--rmd);padding:9px 10px}
+.ba-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.ba-before .ba-label{color:var(--amber3)}
+.ba-after .ba-label{color:var(--teal3)}
+.ba-after{border-color:#5DCAA5}
+.ba-val{font-size:15px;font-weight:700;color:var(--g9)}
+.ba-unit{font-size:10px;color:var(--g4);margin-top:2px}
+.ba-input{width:100%;border:none;background:transparent;font-size:15px;font-weight:700;color:var(--g9);font-family:var(--font);outline:none;padding:0}
+
+/* ── Critical notes ── */
+.crit-box{background:#FFFBF0;border:1.5px solid #EF9F27;border-radius:var(--rmd);padding:10px 12px}
+.crit-hdr{font-size:11px;font-weight:700;color:var(--amber3);display:flex;align-items:center;gap:5px;margin-bottom:8px}
+.crit-note{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:11px;color:var(--amber3);border-bottom:1px solid #F5E5C0}
+.crit-note:last-child{border-bottom:none}
+.crit-note input{width:14px;height:14px;margin-top:1px;flex-shrink:0;accent-color:#EF9F27;cursor:pointer}
+
+/* ── Photo upload ── */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.photo-slot{aspect-ratio:1;border:1.5px dashed var(--g2);border-radius:var(--rmd);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:var(--g0);position:relative;overflow:hidden}
+.photo-slot i{font-size:18px;color:var(--g3)}
+.photo-slot span{font-size:9px;color:var(--g4);margin-top:3px;text-align:center;line-height:1.3;padding:0 3px}
+.photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-slot .pdel{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.photo-slot input{display:none}
+
+/* ── Confidence ── */
+.conf-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.conf-btn{border:1.5px solid var(--g2);border-radius:var(--rmd);padding:9px 10px;cursor:pointer;text-align:center;font-family:var(--font);background:#fff;transition:all .15s}
+.conf-btn.sel{border-width:2px}
+.conf-label{font-size:12px;font-weight:700}
+.conf-desc{font-size:10px;margin-top:2px;opacity:.8}
+
+/* ── Alerts ── */
+.warn-bar{background:var(--amber2);border-left:3px solid #EF9F27;border-radius:0 var(--rmd) var(--rmd) 0;padding:8px 12px;font-size:11px;font-weight:500;color:var(--amber3);display:flex;gap:8px;margin-bottom:10px}
+.danger-bar{background:var(--red2);border-left:3px solid #E24B4A;border-radius:0 var(--rmd) var(--rmd) 0;padding:8px 12px;font-size:11px;font-weight:500;color:var(--red3);display:flex;gap:8px;margin-bottom:10px}
+.info-bar{background:var(--blue2);border-left:3px solid var(--blue);border-radius:0 var(--rmd) var(--rmd) 0;padding:8px 12px;font-size:11px;font-weight:500;color:var(--blue3);display:flex;gap:8px;margin-bottom:10px}
+.success-bar{background:var(--green2);border-left:3px solid #5DCAA5;border-radius:0 var(--rmd) var(--rmd) 0;padding:8px 12px;font-size:11px;font-weight:500;color:var(--green3);display:flex;gap:8px;margin-bottom:10px}
+
+/* ── Waiting screen ── */
+.waiting-card{background:#fff;border-radius:var(--rlg);padding:28px 20px;text-align:center;border:1px solid var(--g2);box-shadow:var(--shadow)}
+.waiting-icon{font-size:40px;color:var(--amber);margin-bottom:12px}
+.waiting-title{font-size:16px;font-weight:700;color:var(--g6)}
+.waiting-sub{font-size:12px;color:var(--g4);margin-top:6px;line-height:1.6}
+.waiting-wo{background:var(--navy);color:#fff;border-radius:var(--rsm);padding:6px 14px;font-size:13px;font-weight:700;display:inline-block;margin:10px 0}
+.pulse{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ── Nav buttons ── */
+.nav-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.btn-back{background:#fff;border:1px solid var(--g2);border-radius:var(--rmd);padding:11px;font-size:13px;font-weight:600;cursor:pointer;color:var(--g4);font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:5px}
+.btn-next{background:var(--navy);border:none;border-radius:var(--rmd);padding:11px;font-size:13px;font-weight:600;cursor:pointer;color:#fff;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:5px}
+.btn-submit-1{background:var(--amber);border:none;border-radius:var(--rmd);padding:13px;font-size:14px;font-weight:700;cursor:pointer;color:#fff;font-family:var(--font);width:100%;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:10px}
+.btn-submit-2{background:var(--teal);border:none;border-radius:var(--rmd);padding:13px;font-size:14px;font-weight:700;cursor:pointer;color:#fff;font-family:var(--font);width:100%;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:10px}
+.btn-submit-2:disabled{opacity:.5;pointer-events:none}
+
+/* ── Success ── */
+.success-card{background:var(--teal2);border:1px solid #5DCAA5;border-radius:var(--rlg);padding:22px;text-align:center;margin:10px 0}
+.btn-wa{background:#1D9E75;border:none;border-radius:var(--rmd);padding:12px;font-size:13px;font-weight:700;cursor:pointer;color:#fff;font-family:var(--font);width:100%;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:10px}
+.btn-new{background:transparent;border:1px solid var(--g2);border-radius:var(--rmd);padding:10px;font-size:12px;cursor:pointer;color:var(--g4);font-family:var(--font);width:100%;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px}
+
+/* ── Dashboard ── */
+.dash-hdr{background:linear-gradient(135deg,#0B3D24,#1D6B3A);border-radius:var(--rlg);padding:14px 16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.dh-top{display:flex;justify-content:space-between;align-items:flex-start}
+.dh-title{font-size:15px;font-weight:700;color:#fff}
+.dh-sub{font-size:11px;color:#9FE1CB;margin-top:2px}
+.dh-badge{background:rgba(255,255,255,.15);border-radius:8px;padding:5px 10px;font-size:11px;color:#9FE1CB;font-weight:700}
+.dh-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.dhs{background:rgba(255,255,255,.12);border-radius:var(--rmd);padding:8px 10px;text-align:center}
+.dhs-val{font-size:20px;font-weight:700;color:#fff}
+.dhs-label{font-size:9px;color:#9FE1CB;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-top:1px}
+
+/* ── Owner banner ── */
+.owner-banner{background:linear-gradient(135deg,var(--purple),#5A4FD4);border-radius:var(--rlg);padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.ob-icon{width:34px;height:34px;background:rgba(255,255,255,.2);border-radius:var(--rmd);display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;flex-shrink:0}
+.ob-title{font-size:13px;font-weight:700;color:#fff}
+.ob-sub{font-size:10px;color:rgba(255,255,255,.7);margin-top:1px}
+.ob-badge{margin-left:auto;background:rgba(255,255,255,.2);border-radius:var(--rsm);padding:3px 9px;font-size:10px;font-weight:700;color:#fff}
+
+.dash-filters{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px}
+.dchip{background:#fff;border:1px solid var(--g2);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;color:var(--g4);white-space:nowrap;font-family:var(--font);flex-shrink:0}
+.dchip.active{background:var(--navy);border-color:var(--navy);color:#fff}
+
+/* ── Job cards ── */
+.job-card{background:#fff;border:1px solid var(--g2);border-radius:var(--rlg);padding:12px 13px;margin-bottom:9px;box-shadow:var(--shadow)}
+.jc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.jc-unit{font-size:13px;font-weight:700;color:var(--g9)}
+.jc-id{font-size:10px;color:var(--g4);font-weight:400}
+.jc-time{font-size:10px;color:var(--g4);white-space:nowrap}
+.jc-badges{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}
+.bdg{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
+.jc-meta{font-size:11px;color:var(--g4);display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.jc-meta span{display:flex;align-items:center;gap:3px}
+.risk-bar{height:3px;border-radius:2px;margin-top:7px;overflow:hidden;background:var(--g2)}
+.risk-fill{height:100%;border-radius:2px}
+
+/* ── Parameter review in dashboard ── */
+.param-review{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px}
+.pr-item{background:var(--g0);border-radius:var(--rsm);padding:6px 8px;border:1px solid var(--g2)}
+.pr-item.ng{background:var(--red2);border-color:var(--red)}
+.pr-label{font-size:9px;color:var(--g4);font-weight:600}
+.pr-val{font-size:12px;font-weight:700;color:var(--g9);margin-top:1px}
+.pr-normal{font-size:9px;color:var(--g4)}
+.pr-item.ng .pr-label,.pr-item.ng .pr-val{color:var(--red3)}
+
+/* ── Decision buttons ── */
+.decision-wrap{background:var(--g0);border-radius:var(--rmd);padding:12px;border:1px solid var(--g2);margin-top:10px}
+.decision-title{font-size:11px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.decision-msg{margin-bottom:8px}
+.decision-msg textarea{width:100%;background:#fff;border:1px solid var(--g2);border-radius:var(--rsm);padding:8px 10px;font-size:12px;color:var(--g9);font-family:var(--font);outline:none;resize:none;line-height:1.5}
+.dec-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.dec-btn{border:none;border-radius:var(--rsm);padding:10px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:4px}
+.dec-approve{background:var(--green2);color:var(--green3)}
+.dec-revisi{background:var(--amber2);color:var(--amber3)}
+.dec-tahan{background:var(--blue2);color:var(--blue3)}
+.dec-tolak{background:var(--red2);color:var(--red3)}
+
+.jc-detail{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--g1)}
+.jc-detail.open{display:block}
+.jd-sec{margin-bottom:10px}
+.jd-sec-title{font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.jd-row{display:flex;justify-content:space-between;align-items:flex-start;padding:3px 0;font-size:11px;gap:8px;border-bottom:1px solid var(--g1)}
+.jd-label{color:var(--g4);flex-shrink:0;min-width:90px}
+.jd-val{color:var(--g6);font-weight:600;text-align:right}
+.expand-btn{background:none;border:none;cursor:pointer;color:var(--g4);font-size:11px;padding:0;font-family:var(--font);display:flex;align-items:center;gap:4px;margin-top:7px;font-weight:600}
+
+/* ── Riwayat ── */
+.hist-item{background:#fff;border:1px solid var(--g2);border-radius:var(--rlg);padding:12px 13px;margin-bottom:8px;box-shadow:var(--shadow)}
+
+/* ── Empty ── */
+.empty{text-align:center;padding:3rem 1rem;color:var(--g4)}
+.empty i{font-size:36px;display:block;margin-bottom:8px}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fadeUp .2s ease both}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="login-screen">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">
+        <i class="ti ti-tool"></i>
+        <div class="login-title">SIGAP</div>
+        <div class="login-sub">Service Intelligence Platform</div>
+      </div>
+      <div class="role-grid">
+        <div class="role-btn" id="role-teknisi" onclick="selectRole('teknisi')">
+          <i class="ti ti-tool"></i>
+          <div><div class="role-name">Teknisi</div><div class="role-desc">Isi form pemeriksaan & laporan</div></div>
+        </div>
+        <div class="role-btn" id="role-katek" onclick="selectRole('katek')">
+          <i class="ti ti-shield-check"></i>
+          <div><div class="role-name">Kepala Teknisi</div><div class="role-desc">Review & approve pekerjaan</div></div>
+        </div>
+        <div class="role-btn" id="role-owner" onclick="selectRole('owner')">
+          <i class="ti ti-crown"></i>
+          <div><div class="role-name">Owner</div><div class="role-desc">Monitor semua aktivitas</div></div>
+        </div>
+        <div class="role-btn" id="role-admin" onclick="selectRole('admin')">
+          <i class="ti ti-headset"></i>
+          <div><div class="role-name">Admin</div><div class="role-desc">Input estimasi & info customer</div></div>
+        </div>
+      </div>
+      <div class="pin-wrap">
+        <div class="pin-label">PIN Akses</div>
+        <input class="pin-input" type="password" id="pin-input" placeholder="••••" maxlength="4" inputmode="numeric">
+      </div>
+      <button class="btn-login" onclick="doLogin()">Masuk <i class="ti ti-arrow-right"></i></button>
+      <div id="login-err" style="color:var(--red);font-size:12px;text-align:center;margin-top:8px;display:none">PIN salah, coba lagi</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
+<div id="main-app" style="display:none">
+  <div class="app-bar">
+    <div class="ab-icon" id="ab-icon"><i class="ti ti-tool"></i></div>
+    <div>
+      <div class="ab-title" id="ab-title">SIGAP Intelligence</div>
+      <div class="ab-sub" id="ab-sub">Home Care Service Platform</div>
+    </div>
+    <div class="ab-badge" id="ab-badge">—</div>
+  </div>
+
+  <div class="wrap">
+    <div class="scr show" id="scr-form">
+      <div id="step-wrap" style="display:none">
+        <div class="step-dots" id="step-dots"></div>
+        <div class="step-info">
+          <div class="step-name" id="step-name"></div>
+          <div class="step-num" id="step-num"></div>
+        </div>
+      </div>
+      <div id="form-content"></div>
+    </div>
+    <div class="scr" id="scr-dash"><div id="dash-content"></div></div>
+    <div class="scr" id="scr-hist"><div id="hist-content"></div></div>
+    <div class="scr" id="scr-unit"><div id="unit-content"></div></div>
+  </div>
+
+  <nav class="bot-nav" id="bot-nav">
+    <button class="bn-btn active" id="nav-form" onclick="navTo('form')">
+      <i class="ti ti-clipboard-text"></i><span>Form Baru</span>
+    </button>
+    <button class="bn-btn" id="nav-dash" onclick="navTo('dash')">
+      <i class="ti ti-chart-bar"></i><span>Dashboard</span>
+      <div class="bn-notif" id="notif-dot" style="display:none"></div>
+    </button>
+    <button class="bn-btn" id="nav-hist" onclick="navTo('hist')">
+      <i class="ti ti-history"></i><span>Riwayat</span>
+    </button>
+    <button class="bn-btn" id="nav-unit" onclick="navTo('unit')">
+      <i class="ti ti-plus"></i><span>Unit Baru</span>
+    </button>
+  </nav>
+</div>
+
+<script>
+/* =============================================
+   CONFIG
+   ============================================= */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbw6E91rfNdZTAGO4uuRqKE05NwWdggrifGDyNeyVVs2EYauC_gORCcowwowBB0jWbUE/exec';
+const WA_KATEK = '6285715406347';  // WA Kepala Teknisi
+const WA_OWNER = '6281271928652';  // WA Owner
+const WA_ADMIN = '628811120545';   // WA Admin
+const PINS = {}; // PIN diambil dari Google Sheets — tidak disimpan di kode
+
+/* =============================================
+   UNIT & JOB DATA
+   ============================================= */
+const UNITS = [
+  {id:'ac',    name:'AC',           sub:'Air Conditioner',      icon:'ti-wind',       color:'#185FA5',bg:'#E6F1FB'},
+  {id:'mc',    name:'Mesin cuci',   sub:'Front & top loading',  icon:'ti-refresh',    color:'#0F6E56',bg:'#E1F5EE'},
+  {id:'kulkas',name:'Kulkas',       sub:'1/2 pintu & side by side',icon:'ti-snowflake',color:'#3C3489',bg:'#EEEDFE'},
+  {id:'disp',  name:'Dispenser',    sub:'Galon atas/bawah',     icon:'ti-droplet',    color:'#185FA5',bg:'#E6F1FB'},
+  {id:'wh',    name:'Water heater', sub:'Listrik & gas',        icon:'ti-flame',      color:'#993C1D',bg:'#FAECE7'},
+  {id:'rc',    name:'Rice cooker',  sub:'Rice cooker & magic com',icon:'ti-bowl',     color:'#633806',bg:'#FAEEDA'},
+  {id:'kipas', name:'Kipas angin',  sub:'Meja, berdiri & exhaust',icon:'ti-propeller',color:'#0F6E56',bg:'#E1F5EE'},
+  {id:'setrika',name:'Setrika',     sub:'Biasa & uap',          icon:'ti-ironing',    color:'#712B13',bg:'#FAECE7'},
+];
+
+const JOB_TYPES = {
+  ac:[
+    {id:'service',  name:'Service / Perbaikan',  desc:'Diagnosa & perbaikan kerusakan', icon:'ti-tool'},
+    {id:'cleaning', name:'Cleaning / Cuci AC',   desc:'Cuci indoor & outdoor',          icon:'ti-droplet'},
+    {id:'instalasi',name:'Instalasi baru',        desc:'Pemasangan unit baru',           icon:'ti-home-plus'},
+    {id:'freon',    name:'Tambah freon',           desc:'Pengisian refrigeran',           icon:'ti-gas-station'},
+    {id:'diagnosa', name:'Pengecekan / Diagnosa', desc:'Pemeriksaan tanpa perbaikan',    icon:'ti-stethoscope'},
+  ],
+  mc:[
+    {id:'service',  name:'Service / Perbaikan', desc:'Diagnosa & perbaikan', icon:'ti-tool'},
+    {id:'cleaning', name:'Cleaning',            desc:'Cuci tabung & komponen',icon:'ti-droplet'},
+    {id:'diagnosa', name:'Pengecekan',          desc:'Pemeriksaan rutin',    icon:'ti-stethoscope'},
+  ],
+  kulkas:[
+    {id:'service',  name:'Service / Perbaikan', desc:'Diagnosa & perbaikan', icon:'ti-tool'},
+    {id:'freon',    name:'Isi freon',            desc:'Pengisian refrigeran', icon:'ti-gas-station'},
+    {id:'diagnosa', name:'Pengecekan',           desc:'Pemeriksaan rutin',   icon:'ti-stethoscope'},
+  ],
+  disp:[
+    {id:'service',  name:'Service / Perbaikan', desc:'Diagnosa & perbaikan', icon:'ti-tool'},
+    {id:'cleaning', name:'Cleaning',            desc:'Desinfeksi & cuci',    icon:'ti-droplet'},
+    {id:'diagnosa', name:'Pengecekan',          desc:'Pemeriksaan rutin',    icon:'ti-stethoscope'},
+  ],
+  wh:[
+    {id:'service',  name:'Service / Perbaikan', desc:'Diagnosa & perbaikan', icon:'ti-tool'},
+    {id:'diagnosa', name:'Pengecekan',           desc:'Cek keamanan',        icon:'ti-stethoscope'},
+  ],
+  rc:[
+    {id:'service',  name:'Service / Perbaikan', desc:'Diagnosa & perbaikan', icon:'ti-tool'},
+    {id:'diagnosa', name:'Pengecekan',           desc:'Pemeriksaan rutin',   icon:'ti-stethoscope'},
+  ],
+  kipas:[
+    {id:'service',  name:'Service / Perbaikan', desc:'Diagnosa & perbaikan', icon:'ti-tool'},
+    {id:'cleaning', name:'Cleaning',            desc:'Cuci & pelumas',       icon:'ti-droplet'},
+    {id:'diagnosa', name:'Pengecekan',          desc:'Pemeriksaan rutin',    icon:'ti-stethoscope'},
+  ],
+  setrika:[
+    {id:'service',  name:'Service / Perbaikan', desc:'Diagnosa & perbaikan', icon:'ti-tool'},
+    {id:'diagnosa', name:'Pengecekan',          desc:'Pemeriksaan rutin',    icon:'ti-stethoscope'},
+  ],
+};
+
+const UNIT_DATA = {
+  ac:{
+    safety:{level:'warn',text:'Matikan MCB sebelum buka unit. Jangan sentuh kapasitor — tetap bermuatan meski listrik mati.'},
+    keluhan:['Kurang dingin','Bocor air','Bau tidak sedap','Berisik/getar','Outdoor mati','MCB jeglek','Error code','Tidak menyala','Suhu tidak stabil','Auto restart'],
+    kondisi_fisik:['Filter','Evaporator','Blower indoor','Drain/drip tray','Pipa refrigeran','Bracket outdoor','Fan outdoor','Kondisi wiring','Remote/PCB indoor'],
+    kondisi_teknis:['Kompresor','Kapasitor','Thermistor','Contactor/relay'],
+    tindakan_service:['Cuci evaporator','Cuci blower','Cuci outdoor','Tambah freon','Ganti kapasitor','Ganti PCB','Ganti thermistor','Bersihkan drain','Perbaiki wiring','Perbaiki flare','Ganti fan motor'],
+    tindakan_cleaning:['Steam evaporator','Steam outdoor','Cuci blower','Bersihkan drain','Flush drain','Cuci filter'],
+    tindakan_freon:['Cek kebocoran','Flushing','Vacuum','Isi freon R32','Isi freon R410A','Isi freon R22'],
+    tindakan_diagnosa:['Pengecekan visual','Pengukuran parameter','Identifikasi masalah','Laporan kondisi unit'],
+    measures:[
+      {l:'Tegangan input',         n:'198–242 V',          u:'V',    wajib:true},
+      {l:'Ampere running kompresor',n:'Sesuai nameplate',  u:'A',    wajib:true},
+      {l:'Ampere fan indoor',      n:'< 1.5 A',            u:'A',    wajib:false},
+      {l:'Ampere fan outdoor',     n:'< 2.0 A',            u:'A',    wajib:false},
+      {l:'Tekanan low side',       n:'65–80 psi',          u:'psi',  wajib:true},
+      {l:'Tekanan high side',      n:'200–250 psi',        u:'psi',  wajib:true},
+      {l:'Suhu udara masuk indoor',n:'Suhu ruangan',       u:'°C',   wajib:true},
+      {l:'Suhu udara keluar indoor',n:'15–25°C',           u:'°C',   wajib:true},
+      {l:'Delta-T (masuk-keluar)', n:'> 8°C ideal 10–14°C',u:'°C',  wajib:true},
+      {l:'Suhu ruangan',           n:'Kondisi aktual',     u:'°C',   wajib:true},
+      {l:'Suhu pipa suction',      n:'Dingin/berembun',    u:'°C',   wajib:false},
+      {l:'Suhu pipa discharge',    n:'40–70°C',            u:'°C',   wajib:false},
+      {l:'Waktu running sblm ukur',n:'Min 15 menit',       u:'mnt',  wajib:true},
+      {l:'Panjang pipa terpasang', n:'Sesuai instalasi',   u:'m',    wajib:false},
+    ],
+    critical:['Jalur pipa tanam','Flare rawan bocor','Outdoor sulit dijangkau','Indoor miring','Drain rawan mampet','Customer sensitif suara','Unit sering kurang freon','Area listrik berisiko'],
+    photos_t1:['Before','Nameplate','Evaporator before','Outdoor before','Pressure gauge before'],
+    photos_t2:['After','Evaporator after','Outdoor after','Pressure gauge after','Part diganti','Area kritis'],
+  },
+  mc:{
+    safety:{level:'warn',text:'Cabut steker & tunggu 5 menit sebelum cek selang/pompa. Air + listrik sangat berbahaya.'},
+    keluhan:['Tidak menyala','Tidak mau spin','Air tidak keluar','Air tidak masuk','Bocor','Berisik','Getar berlebihan','Error code','Bau','Putaran lemah'],
+    kondisi_fisik:['Kabel power','Tombol/panel','Tabung/drum','Karet pintu','Selang inlet','Selang drain','Pulsator/agitator','Shock absorber'],
+    kondisi_teknis:['Modul/PCB','Dinamo','Kapasitor','Vanbelt','Gearbox','Drain motor','Door switch'],
+    tindakan_service:['Ganti kapasitor','Ganti vanbelt','Ganti drain motor','Bersihkan filter pump','Ganti PCB','Ganti door switch','Perbaiki selang','Ganti bearing','Ganti dinamo'],
+    tindakan_cleaning:['Cuci tabung','Bersihkan filter','Cuci pulsator','Bersihkan selang drain'],
+    tindakan_diagnosa:['Pengecekan visual','Pengukuran parameter','Identifikasi masalah'],
+    measures:[
+      {l:'Tegangan input',         n:'198–242 V',     u:'V',    wajib:true},
+      {l:'Arus motor saat agitasi',n:'Sesuai nameplate',u:'A',  wajib:true},
+      {l:'Arus motor saat spin',   n:'Sesuai nameplate',u:'A',  wajib:true},
+      {l:'Arus drain motor',       n:'< 1 A',         u:'A',    wajib:false},
+      {l:'Waktu pengisian air',    n:'< 3 menit',     u:'mnt',  wajib:true},
+      {l:'Waktu drain air',        n:'< 3 menit',     u:'mnt',  wajib:true},
+      {l:'Level vibrasi saat spin',n:'Minimal 1-5',   u:'1-5',  wajib:true},
+      {l:'Suhu motor saat running',n:'< 60°C',        u:'°C',   wajib:false},
+      {l:'Kapasitansi kapasitor',  n:'Sesuai label',  u:'µF',   wajib:false},
+    ],
+    critical:['Lantai tidak rata','Area lembap','Pembuangan sempit','Sering overload cucian','Pernah ganti modul','Pernah ganti drain motor','Sering error saat spin'],
+    photos_t1:['Before','Nameplate','Area masalah before'],
+    photos_t2:['After','Komponen diganti','Hasil akhir'],
+  },
+  kulkas:{
+    safety:{level:'warn',text:'Tunggu 5 menit setelah unit mati sebelum menyalakan kembali.'},
+    keluhan:['Tidak dingin','Freezer dingin bawah tidak','Bunyi keras','Bocor air','Bunga es berlebihan','Mati total','Kompresor panas','Nyetrum','Bau'],
+    kondisi_fisik:['Kabel power','Karet pintu freezer','Karet pintu kulkas','Kondisi interior','Saluran drain','Penempatan unit'],
+    kondisi_teknis:['Thermostat','Fan evaporator','Kompresor','Relay overload','Fan kondensor','Timer defrost','Heater defrost'],
+    tindakan_service:['Isi freon','Defrost manual','Ganti fan evap','Ganti karet pintu','Ganti relay overload','Ganti timer defrost','Ganti heater defrost','Bersihkan kondensor','Ganti thermostat'],
+    tindakan_diagnosa:['Pengecekan visual','Pengukuran parameter','Identifikasi masalah'],
+    measures:[
+      {l:'Tegangan input',         n:'198–242 V',     u:'V',   wajib:true},
+      {l:'Arus kompresor',         n:'Sesuai nameplate',u:'A', wajib:true},
+      {l:'Suhu freezer',           n:'-15 s/d -18°C', u:'°C', wajib:true},
+      {l:'Suhu kulkas (rak tengah)',n:'2–8°C',         u:'°C', wajib:true},
+      {l:'Delta suhu freezer-kulkas',n:'> 7°C',        u:'°C', wajib:true},
+      {l:'Suhu kondensor',         n:'< 60°C',         u:'°C', wajib:false},
+      {l:'Gap karet pintu',        n:'Kertas tidak mudah lepas',u:'mm',wajib:true},
+      {l:'Suhu ruangan',           n:'Kondisi aktual', u:'°C', wajib:true},
+    ],
+    critical:['Karet pintu lemah','Sering tidak rapat','Penempatan mepet dinding','Area panas','Pernah isi freon','Indikasi bocor halus'],
+    photos_t1:['Before','Nameplate','Evaporator','Karet pintu'],
+    photos_t2:['After','Komponen diganti','Hasil akhir'],
+  },
+  disp:{
+    safety:{level:'warn',text:'Cabut steker sebelum membuka bodi. Elemen heater bertegangan tinggi.'},
+    keluhan:['Tidak panas','Tidak dingin','Bocor','Air bau','Air kecil','Nyetrum','Mati total','Suara kompresor keras'],
+    kondisi_fisik:['Kabel power','Kran air panas','Kran air dingin','Tangki panas','Tangki dingin','Selang internal','Jalur air'],
+    kondisi_teknis:['Thermostat','Elemen pemanas','Kompresor','Peltier/fan'],
+    tindakan_service:['Ganti elemen','Ganti thermostat','Descaling tangki','Ganti kran','Bersihkan jalur air','Desinfeksi','Ganti kompresor'],
+    tindakan_cleaning:['Desinfeksi tangki panas','Desinfeksi tangki dingin','Cuci jalur air','Cuci selang'],
+    tindakan_diagnosa:['Pengecekan visual','Pengukuran parameter','Identifikasi masalah'],
+    measures:[
+      {l:'Tegangan input',              n:'198–242 V',        u:'V',      wajib:true},
+      {l:'Suhu air panas (steady)',      n:'85–95°C',          u:'°C',     wajib:true},
+      {l:'Suhu air dingin (steady)',     n:'5–15°C',           u:'°C',     wajib:true},
+      {l:'Waktu pemanasan (cold start)', n:'< 10 menit',       u:'mnt',    wajib:false},
+      {l:'Debit air per menit',          n:'> 1.5 L/menit',    u:'L/mnt',  wajib:true},
+      {l:'Resistansi elemen panas',      n:'150–300 Ω',        u:'Ω',      wajib:false},
+    ],
+    critical:['Jalur sering berlumut','Kran rawan bocor','Tangki berkerak','Area galon kotor','Air isi ulang kualitas rendah'],
+    photos_t1:['Before','Nameplate','Tangki','Kran'],
+    photos_t2:['After','Hasil akhir'],
+  },
+  wh:{
+    safety:{level:'danger',text:'BAHAYA TINGGI — Matikan MCB & tutup kran air utama. Gas: tutup katup. Air panas bertekanan sangat berbahaya.'},
+    keluhan:['Air tidak panas','Air terlalu panas','Bocor','MCB turun','Nyetrum','Tekanan air kecil','Api tidak menyala (gas)','Mati total'],
+    kondisi_fisik:['Kabel power','MCB/sekering','Selang inlet','Selang outlet','Kondisi tangki','Grounding','Safety valve'],
+    kondisi_teknis:['Thermostat','Elemen pemanas','Sensor suhu','Anode rod','Regulator gas','Burner (gas)'],
+    tindakan_service:['Ganti elemen','Ganti thermostat','Ganti safety valve','Flush tangki','Ganti anode rod','Ganti PRV','Perbaiki grounding'],
+    tindakan_diagnosa:['Pengecekan visual','Pengukuran parameter','Cek keamanan instalasi'],
+    measures:[
+      {l:'Tegangan input',              n:'198–242 V',         u:'V',   wajib:true},
+      {l:'Arus saat heating',           n:'Sesuai nameplate',  u:'A',   wajib:true},
+      {l:'Suhu air keluar (20 mnt)',     n:'40–65°C',           u:'°C',  wajib:true},
+      {l:'Tekanan air masuk',           n:'> 0.5 bar',         u:'bar', wajib:true},
+      {l:'Resistansi elemen',           n:'10–30 Ω',           u:'Ω',   wajib:true},
+      {l:'Resistansi grounding',        n:'< 1 Ω',             u:'Ω',   wajib:false},
+      {l:'Kondisi anode rod (sisa)',     n:'> 30%',             u:'%',   wajib:false},
+    ],
+    critical:['Tekanan air kecil','Instalasi listrik kurang aman','Grounding tidak ada','Area lembap','Pernah bocor tangki','Risiko listrik tinggi'],
+    photos_t1:['Before','Nameplate','Tangki','Instalasi','Safety valve'],
+    photos_t2:['After','Grounding','Hasil akhir'],
+  },
+  rc:{
+    safety:{level:'warn',text:'Lepas steker & dinginkan 30 menit. Heating plate sangat panas — risiko luka bakar.'},
+    keluhan:['Nasi cepat basi','Tidak panas','Terlalu panas/gosong','Tidak mau matang','Lampu mati','Mati total','Bau gosong','Nyetrum'],
+    kondisi_fisik:['Kabel power','Inner pot','Body & tutup','Steam vent','Karet gasket','Plat pemanas'],
+    kondisi_teknis:['Saklar cook/warm','Thermostat','Thermal fuse','Elemen bawah','Sensor magnet'],
+    tindakan_service:['Ganti thermal fuse','Ganti elemen','Ganti inner pot','Bersihkan plat pemanas','Bersihkan steam vent','Ganti thermostat'],
+    tindakan_diagnosa:['Pengecekan visual','Pengukuran parameter','Identifikasi masalah'],
+    measures:[
+      {l:'Tegangan input',              n:'198–242 V',    u:'V',   wajib:true},
+      {l:'Arus saat mode cook',         n:'Sesuai wattage',u:'A',  wajib:true},
+      {l:'Suhu heating plate (cook)',   n:'100–110°C',    u:'°C',  wajib:true},
+      {l:'Suhu warm mode (30 mnt)',      n:'65–75°C stabil',u:'°C', wajib:true},
+      {l:'Resistansi elemen bawah',     n:'20–80 Ω',      u:'Ω',   wajib:true},
+      {l:'Resistansi thermal fuse',     n:'0 Ω (continuity)',u:'Ω',wajib:true},
+      {l:'Daya aktual',                 n:'Sesuai label', u:'W',   wajib:false},
+    ],
+    critical:['Inner pot tidak rata','Plat pemanas kotor','Pernah ganti thermal fuse','Steam vent sering kotor','Kabel pernah panas'],
+    photos_t1:['Before','Nameplate','Heating plate','Thermal fuse'],
+    photos_t2:['After','Komponen diganti','Hasil akhir'],
+  },
+  kipas:{
+    safety:{level:'warn',text:'Cabut steker sebelum buka baling-baling. Pegas pengunci blade bisa melukai jari.'},
+    keluhan:['Mati total','Putaran lemah','Tidak bisa swing','Bunyi berisik','Bau gosong','Cepat panas','Tombol rusak'],
+    kondisi_fisik:['Kabel power','Baling-baling','Grill/body','As kipas','Gear swing'],
+    kondisi_teknis:['Saklar speed','Kapasitor','Dinamo/motor','Bearing/bushing','Thermal fuse motor'],
+    tindakan_service:['Ganti kapasitor','Pelumas bearing','Ganti dinamo','Ganti gear swing','Ganti saklar','Perbaiki kabel','Ganti thermal fuse'],
+    tindakan_cleaning:['Cuci baling-baling','Cuci grill','Pelumas bearing'],
+    tindakan_diagnosa:['Pengecekan visual','Pengukuran parameter','Identifikasi masalah'],
+    measures:[
+      {l:'Tegangan input',              n:'198–242 V',    u:'V',   wajib:true},
+      {l:'Arus running speed 1',        n:'Sesuai nameplate',u:'A',wajib:true},
+      {l:'Arus running speed max',      n:'Sesuai nameplate',u:'A',wajib:true},
+      {l:'Kapasitansi kapasitor',       n:'Sesuai label', u:'µF',  wajib:true},
+      {l:'Kecepatan udara speed max',   n:'> 1.5 m/s',    u:'m/s', wajib:false},
+      {l:'Resistansi koil motor',       n:'Continuity ada',u:'Ω',  wajib:true},
+      {l:'Suhu motor (30 mnt running)', n:'< 60°C',       u:'°C',  wajib:false},
+    ],
+    critical:['Dinamo pernah rewinding','Bearing sering kering','Dipakai nonstop','Body retak','Kabel pernah putus/sambung'],
+    photos_t1:['Before','Nameplate','Kapasitor','Motor'],
+    photos_t2:['After','Komponen diganti','Hasil akhir'],
+  },
+  setrika:{
+    safety:{level:'warn',text:'Cabut steker & tunggu dingin total (30 mnt). Soleplate bisa 200°C — bahaya luka bakar.'},
+    keluhan:['Tidak panas','Terlalu panas','Lengket','Nyetrum','Kabel panas','Lampu mati','Uap tidak keluar','Bocor air'],
+    kondisi_fisik:['Kabel power','Steker','Soleplate','Tangki air (uap)','Lubang uap'],
+    kondisi_teknis:['Thermostat','Elemen pemanas','Lampu indikator','Pompa uap','Thermal fuse'],
+    tindakan_service:['Ganti thermal fuse','Ganti thermostat','Ganti elemen','Ganti kabel','Descaling soleplate','Bersihkan jalur uap'],
+    tindakan_diagnosa:['Pengecekan visual','Pengukuran parameter','Identifikasi masalah'],
+    measures:[
+      {l:'Tegangan input',              n:'198–242 V',         u:'V',    wajib:true},
+      {l:'Arus saat heating max',       n:'Sesuai wattage',    u:'A',    wajib:true},
+      {l:'Suhu soleplate setting max',  n:'Sesuai dial',       u:'°C',   wajib:true},
+      {l:'Waktu pemanasan (cold-max)',   n:'< 2 menit',         u:'mnt',  wajib:true},
+      {l:'Resistansi elemen',           n:'20–150 Ω',          u:'Ω',    wajib:true},
+      {l:'Resistansi thermal fuse',     n:'0 Ω (continuity)',  u:'Ω',    wajib:true},
+      {l:'Daya aktual',                 n:'Sesuai label',      u:'W',    wajib:false},
+    ],
+    critical:['Kabel sering tertekuk','Soleplate berkerak','Pernah jatuh','Thermostat tidak stabil','Pakai air keran untuk uap','Risiko nyetrum'],
+    photos_t1:['Before','Nameplate','Soleplate','Elemen/thermal fuse'],
+    photos_t2:['After','Komponen diganti','Hasil akhir'],
+  }
+};
+
+/* =============================================
+   STATE
+   ============================================= */
+let role = '';  // teknisi / katek / owner
+let S = { unit:null, jobType:null, tahap:1, step:0, fd:{}, chk:{}, mVals:{}, mStatus:{}, tindakan:[], confidence:null, critical:[], penyebab:[], photos:{}, wo_id:'' };
+let jobs = [];
+let dashFilter = 'semua';
+
+function genWO(){ return 'WO-'+Date.now().toString().slice(-6); }
+
+/* =============================================
+   LOGIN
+   ============================================= */
+function selectRole(r){
+  document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('role-'+r).classList.add('sel');
+  role=r;
+}
+
+function doLogin(){
+  const pin = document.getElementById('pin-input').value;
+  const err = document.getElementById('login-err');
+  const btn = document.querySelector('.btn-login');
+  if(!role){ err.textContent='Pilih role dulu!'; err.style.display='block'; return; }
+  if(!pin){ err.textContent='Masukkan PIN!'; err.style.display='block'; return; }
+
+  // Tampilkan loading
+  btn.innerHTML='<i class="ti ti-loader-2"></i> Memverifikasi...';
+  btn.disabled=true;
+  err.style.display='none';
+
+  // Fetch PIN dari Google Sheets
+  const cbName = 'sigap_login_' + Date.now();
+  const script = document.createElement('script');
+  const timeout = setTimeout(()=>{
+    delete window[cbName];
+    try{ document.body.removeChild(script); }catch(e){}
+    btn.innerHTML='Masuk <i class="ti ti-arrow-right"></i>';
+    btn.disabled=false;
+    err.textContent='Koneksi gagal. Coba lagi.';
+    err.style.display='block';
+  }, 8000);
+
+  window[cbName] = function(data){
+    clearTimeout(timeout);
+    delete window[cbName];
+    try{ document.body.removeChild(script); }catch(e){}
+    btn.innerHTML='Masuk <i class="ti ti-arrow-right"></i>';
+    btn.disabled=false;
+
+    if(data && data.pins && data.pins[role]){
+      if(pin === data.pins[role]){
+        err.style.display='none';
+        document.getElementById('login-screen').style.display='none';
+        document.getElementById('main-app').style.display='block';
+        loadJobs();
+        initApp();
+      } else {
+        err.textContent='PIN salah, coba lagi';
+        err.style.display='block';
+        document.getElementById('pin-input').value='';
+      }
+    } else {
+      // Fallback: PIN belum disetup di Sheets, pakai default
+      err.textContent='PIN belum dikonfigurasi. Hubungi admin sistem.';
+      err.style.display='block';
+    }
+  };
+
+  script.src = GAS_URL + '?action=getPins&callback=' + cbName;
+  script.onerror = ()=>{
+    clearTimeout(timeout);
+    btn.innerHTML='Masuk <i class="ti ti-arrow-right"></i>';
+    btn.disabled=false;
+    err.textContent='Koneksi gagal. Coba lagi.';
+    err.style.display='block';
+  };
+  document.body.appendChild(script);
+}
+
+function initApp(){
+  const roleNames = { teknisi:'Teknisi', katek:'Kepala Teknisi', owner:'Owner' };
+  document.getElementById('ab-sub').textContent = roleNames[role] + ' — SIGAP v4';
+  // Owner: hide form tab, show only dash & hist
+  if(role==='owner'){
+    document.getElementById('nav-form').style.display='none';
+    navTo('dash');
+  } else if(role==='admin'){
+    document.getElementById('nav-form').style.display='none';
+    navTo('dash');
+  } else {
+    navTo('form');
+  }
+  updateNotifDot();
+}
+
+/* =============================================
+   NAVIGATION
+   ============================================= */
+function navTo(scr){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('show'));
+  document.querySelectorAll('.bn-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('scr-'+scr).classList.add('show');
+  const navBtn = document.getElementById('nav-'+scr);
+  if(navBtn) navBtn.classList.add('active');
+  if(scr==='form'){ if(!S.unit) renderUnitSelect(); }
+  else if(scr==='dash') renderDash();
+  else if(scr==='hist') renderHist();
+  else if(scr==='unit') renderAddUnit();
+}
+
+function updateNotifDot(){
+  const dot = document.getElementById('notif-dot');
+  if(!dot) return;
+  const pending = jobs.filter(j=>j.status==='menunggu-review').length;
+  dot.style.display = (pending>0 && (role==='katek'||role==='owner')) ? 'block' : 'none';
+}
+
+/* =============================================
+   FORM — UNIT & JOB SELECT
+   ============================================= */
+function renderUnitSelect(){
+  document.getElementById('step-wrap').style.display='none';
+  updateAppBar('SIGAP Intelligence','Pilih unit','ti-tool','#2d4a8a');
+  const fc=document.getElementById('form-content');
+  let h=`<div class="card anim"><div class="card-hdr"><i class="ti ti-apps" style="color:var(--blue)"></i><span class="card-hdr-t">Pilih jenis unit</span></div><div class="card-body"><div class="unit-grid">`;
+  UNITS.forEach(u=>{
+    h+=`<div class="unit-btn" onclick="selectUnit('${u.id}')">
+      <i class="ti ${u.icon}"></i>
+      <div class="unit-btn-name">${u.name}</div>
+      <div class="unit-btn-sub">${u.sub}</div>
+    </div>`;
+  });
+  h+=`</div></div></div>`;
+  fc.innerHTML=h;
+}
+
+function selectUnit(id){
+  S={unit:id,jobType:null,tahap:1,step:0,fd:{},chk:{},mVals:{},mStatus:{},tindakan:[],confidence:null,critical:[],penyebab:[],photos:{},wo_id:genWO()};
+  renderJobSelect();
+}
+
+function renderJobSelect(){
+  document.getElementById('step-wrap').style.display='none';
+  const u=UNITS.find(x=>x.id===S.unit);
+  const jts=JOB_TYPES[S.unit]||[];
+  updateAppBar(u.name,'Pilih jenis pekerjaan',u.icon,u.color+'40');
+  document.getElementById('ab-badge').textContent=S.wo_id;
+  const fc=document.getElementById('form-content');
+  let h=`<div class="card anim">
+    <div class="card-hdr" style="background:${u.bg}">
+      <i class="ti ${u.icon}" style="color:${u.color}"></i>
+      <span class="card-hdr-t" style="color:${u.color}">${u.name} — Pilih jenis pekerjaan</span>
+    </div>
+    <div class="card-body"><div class="job-grid">`;
+  jts.forEach(j=>{
+    h+=`<div class="job-btn" onclick="selectJob('${j.id}')">
+      <i class="ti ${j.icon}"></i>
+      <div><div class="job-btn-name">${j.name}</div><div class="job-btn-desc">${j.desc}</div></div>
+    </div>`;
+  });
+  h+=`</div></div></div>
+  <button onclick="S.unit=null;renderUnitSelect()" style="width:100%;background:#fff;border:1px solid var(--g2);border-radius:var(--rmd);padding:11px;font-size:13px;font-weight:600;cursor:pointer;color:var(--g4);font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px">
+    <i class="ti ti-arrow-left"></i> Ganti unit
+  </button>`;
+  fc.innerHTML=h;
+}
+
+function selectJob(id){
+  S.jobType=id;
+  S.step=0;
+  S.tahap=1;
+  renderTahap1();
+}
+
+/* =============================================
+   TAHAP 1 — FORM PEMERIKSAAN
+   ============================================= */
+const STEPS_T1 = ['Identitas','Keluhan & Kondisi','Parameter Sebelum','Foto & Submit'];
+
+function renderTahap1(){
+  const u=UNITS.find(x=>x.id===S.unit);
+  updateAppBar('Tahap 1 — Pemeriksaan',u.name+' — '+S.wo_id,u.icon,u.color+'40');
+  document.getElementById('ab-badge').textContent=S.wo_id;
+  renderStepDots(STEPS_T1, S.step);
+  const fc=document.getElementById('form-content');
+  fc.innerHTML=''; fc.classList.remove('anim'); void fc.offsetWidth; fc.classList.add('anim');
+  // Tahap badge
+  const tb=document.createElement('div');
+  tb.className='tahap-badge';
+  tb.innerHTML=`<div class="tb-num" style="background:var(--amber2);color:var(--amber3)">1</div>
+    <div><div class="tb-title">Form Pemeriksaan</div><div class="tb-sub">Isi sebelum mulai pekerjaan — submit untuk review kepala teknisi</div></div>
+    <span class="tb-status" style="background:var(--amber2);color:var(--amber3)">Draft</span>`;
+  fc.appendChild(tb);
+  if(S.step===0) renderT1S0(fc);
+  else if(S.step===1) renderT1S1(fc);
+  else if(S.step===2) renderT1S2(fc);
+  else if(S.step===3) renderT1S3(fc);
+  restoreFD();
+  // Nav buttons
+  if(S.step < STEPS_T1.length-1){
+    addNavBtns(fc, S.step>0, ()=>{saveFD();S.step--;renderTahap1();}, ()=>{saveFD();S.step++;renderTahap1();}, S.step===0);
+  }
+}
+
+function renderT1S0(fc){
+  const c1=mkCard('ti-user','Identitas customer','var(--blue)');
+  c1.querySelector('.card-body').innerHTML=`
+    <div class="frow">
+      <div class="fg"><div class="fl fl-req">Nama customer</div><input class="fi" id="f-cust-nama" placeholder="Nama lengkap"></div>
+      <div class="fg"><div class="fl fl-req">No. telepon</div><input class="fi" type="tel" id="f-cust-telp" placeholder="08xx-xxxx"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><div class="fl">Tipe customer</div>
+        <select class="fsel" id="f-cust-tipe"><option>Rumah</option><option>Kantor</option><option>Restoran</option><option>Toko</option><option>Lainnya</option></select>
+      </div>
+      <div class="fg"><div class="fl">Area/kecamatan</div><input class="fi" id="f-cust-area" placeholder="Area"></div>
+    </div>
+    <div class="fg"><div class="fl fl-req">Alamat lengkap</div><input class="fi" id="f-cust-alamat" placeholder="Alamat lengkap"></div>`;
+  fc.appendChild(c1);
+
+  const c2=mkCard('ti-cpu','Identitas unit','var(--blue)');
+  c2.querySelector('.card-body').innerHTML=`
+    <div class="frow">
+      <div class="fg"><div class="fl fl-req">Merk</div><input class="fi" id="f-unit-merk" placeholder="Merk"></div>
+      <div class="fg"><div class="fl fl-req">Model/Tipe</div><input class="fi" id="f-unit-model" placeholder="Model"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><div class="fl">Kapasitas</div><input class="fi" id="f-unit-kap" placeholder="PK/Liter/Watt"></div>
+      <div class="fg"><div class="fl">Tahun</div><input class="fi" id="f-unit-tahun" placeholder="2020"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><div class="fl">Serial Number</div><input class="fi" id="f-unit-sn" placeholder="SN (jika ada)"></div>
+      <div class="fg"><div class="fl">Lokasi unit</div><input class="fi" id="f-unit-lokasi" placeholder="Ruang tamu/dll"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><div class="fl">Service terakhir</div><input class="fi" id="f-unit-last-svc" placeholder="Tanggal/tidak tahu"></div>
+      <div class="fg"><div class="fl">Teknisi terakhir</div><input class="fi" id="f-unit-last-tek" placeholder="Nama teknisi"></div>
+    </div>`;
+  fc.appendChild(c2);
+
+  const c3=mkCard('ti-user-check','Teknisi yang bertugas','var(--blue)');
+  c3.querySelector('.card-body').innerHTML=`
+    <div class="frow">
+      <div class="fg"><div class="fl fl-req">Nama teknisi</div><input class="fi" id="f-tek-nama" placeholder="Nama lengkap"></div>
+      <div class="fg"><div class="fl fl-req">No. WA teknisi</div><input class="fi" type="tel" id="f-tek-wa" placeholder="628xxxxxxxxx"></div>
+    </div>`;
+  fc.appendChild(c3);
+}
+
+function renderT1S1(fc){
+  const ud=UNIT_DATA[S.unit];
+  const u=UNITS.find(x=>x.id===S.unit);
+  // Safety
+  const sw=document.createElement('div');
+  sw.className=ud.safety.level==='danger'?'danger-bar':'warn-bar';
+  sw.innerHTML=`<i class="ti ti-alert-triangle" style="flex-shrink:0;margin-top:1px"></i><span>${ud.safety.text}</span>`;
+  fc.appendChild(sw);
+
+  // Keluhan
+  const ck=mkCard('ti-report-search','A. Keluhan customer',u.color);
+  let kh='';
+  ud.keluhan.forEach((k,i)=>{
+    kh+=`<div class="ci" id="ci-k${i}" onclick="toggleCI('k${i}')"><input type="checkbox" id="ck-k${i}" onclick="event.stopPropagation()"><span class="ci-text">${k}</span></div>`;
+  });
+  kh+=`<div class="fg" style="margin-top:6px"><div class="fl">Catatan keluhan tambahan</div>
+    <textarea class="fta" id="f-keluhan-catatan" rows="2" placeholder="Cerita customer..."></textarea></div>`;
+  ck.querySelector('.card-body').innerHTML=kh;
+  fc.appendChild(ck);
+
+  // Kondisi fisik
+  const cf=mkCard('ti-eye','B. Kondisi fisik sebelum pekerjaan',u.color);
+  let fh='';
+  (ud.kondisi_fisik||[]).forEach((item,i)=>{
+    const key='f-'+i; const cur=S.chk[key]||'';
+    fh+=`<div class="cond-item">
+      <div class="cond-label">${item}</div>
+      <div class="cond-btns">
+        <button class="cb${cur==='ok'?' ok':''}" onclick="setCond('${key}','ok')">✓ OK</button>
+        <button class="cb${cur==='warn'?' warn':''}" onclick="setCond('${key}','warn')">⚠ Perhatian</button>
+        <button class="cb${cur==='bad'?' bad':''}" onclick="setCond('${key}','bad')">✗ Rusak</button>
+      </div></div>`;
+  });
+  cf.querySelector('.card-body').innerHTML=fh;
+  fc.appendChild(cf);
+
+  // Kondisi teknis
+  const ct=mkCard('ti-cpu','C. Kondisi teknis sebelum pekerjaan',u.color);
+  let th='';
+  (ud.kondisi_teknis||[]).forEach((item,i)=>{
+    const key='t-'+i; const cur=S.chk[key]||'';
+    th+=`<div class="cond-item">
+      <div class="cond-label">${item}</div>
+      <div class="cond-btns">
+        <button class="cb${cur==='ok'?' ok':''}" onclick="setCond('${key}','ok')">✓ OK</button>
+        <button class="cb${cur==='warn'?' warn':''}" onclick="setCond('${key}','warn')">⚠ Perhatian</button>
+        <button class="cb${cur==='bad'?' bad':''}" onclick="setCond('${key}','bad')">✗ Rusak</button>
+      </div></div>`;
+  });
+  ct.querySelector('.card-body').innerHTML=th;
+  fc.appendChild(ct);
+
+  // Urgensi
+  const cu=mkCard('ti-alert-circle','D. Urgensi & perkiraan masalah',u.color);
+  cu.querySelector('.card-body').innerHTML=`
+    <div class="frow">
+      <div class="fg"><div class="fl">Tingkat urgensi</div>
+        <select class="fsel" id="f-urgensi"><option value="rendah">🟢 Rendah</option><option value="sedang" selected>🟡 Sedang</option><option value="tinggi">🔴 Tinggi</option></select>
+      </div>
+      <div class="fg"><div class="fl">Risk level</div>
+        <select class="fsel" id="f-risk"><option value="normal">🟢 Normal</option><option value="monitoring">🟡 Monitoring</option><option value="high">🔴 High Risk</option></select>
+      </div>
+    </div>
+    <div class="fg"><div class="fl">Perkiraan masalah / gejala awal</div>
+      <textarea class="fta" id="f-gejala" rows="2" placeholder="Gejala yang ditemukan saat pemeriksaan awal..."></textarea>
+    </div>`;
+  fc.appendChild(cu);
+}
+
+function renderT1S2(fc){
+  const ud=UNIT_DATA[S.unit];
+  const u=UNITS.find(x=>x.id===S.unit);
+  const cm=mkCard('ti-bolt','Parameter teknis SEBELUM pekerjaan',u.color);
+  let mh=`<div class="info-bar" style="margin-bottom:6px"><i class="ti ti-info-circle" style="flex-shrink:0"></i>
+    <span><b>★ wajib</b> harus diisi. Parameter lain sangat dianjurkan untuk kelengkapan QC kepala teknisi.</span></div>`;
+  (ud.measures||[]).forEach((m,i)=>{
+    const st=S.mStatus['mb-'+i]||'';
+    const ng=st==='ng';
+    mh+=`<div class="mr${ng?' mr-ng':''}">
+      <div class="mr-top">
+        <div>
+          <div class="mr-label">${m.l} ${m.wajib?'<span class="mr-req">★ wajib</span>':''}</div>
+          ${m.n?`<div class="mr-normal">Normal: ${m.n}</div>`:''}
+        </div>
+        <div class="mr-status">
+          <button class="ms${st==='ok'?' ok':''}" onclick="setMS('mb-${i}','ok')">OK</button>
+          <button class="ms${st==='ng'?' ng':''}" onclick="setMS('mb-${i}','ng')">NG</button>
+        </div>
+      </div>
+      <input id="mb-${i}" placeholder="Nilai terukur${m.u?' ('+m.u+')':''}" 
+        type="${['V','A','°C','psi','bar','Ω','W','µF','m'].includes(m.u)?'number':'text'}" 
+        inputmode="decimal" value="${S.mVals['mb-'+i]||''}">
+    </div>`;
+  });
+  // Tambah estimasi & rekomendasi teknisi
+  mh += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--g2)">';
+  mh += '<div class="fg" style="margin-bottom:8px">';
+  mh += '<div class="fl">Perkiraan tindakan yang diperlukan</div>';
+  mh += '<textarea class="fta" id="f-rekomen-awal" rows="2" placeholder="Contoh: Ganti kapasitor, tambah freon, cuci unit..."></textarea>';
+  mh += '</div>';
+  mh += '<div class="frow">';
+  mh += '<div class="fg"><div class="fl">Estimasi biaya (Rp) <span style="color:var(--g4);font-size:9px;text-transform:none">*akan diverifikasi admin</span></div>';
+  mh += '<input class="fi" type="number" id="f-est-biaya" placeholder="Perkiraan biaya"></div>';
+  mh += '<div class="fg"><div class="fl">Estimasi waktu</div>';
+  mh += '<select class="fsel" id="f-est-waktu"><option>Kurang 1 jam</option><option>1-2 jam</option><option>2-4 jam</option><option>Lebih dari 4 jam</option><option>Multi-hari</option></select>';
+  mh += '</div></div></div>';
+  cm.querySelector('.card-body').innerHTML=mh;
+  fc.appendChild(cm);
+}
+
+function renderT1S3(fc){
+  const ud=UNIT_DATA[S.unit];
+  const u=UNITS.find(x=>x.id===S.unit);
+  const cats=ud.photos_t1||['Before','Nameplate','Area masalah'];
+  const cp=mkCard('ti-camera','Foto dokumentasi Tahap 1',u.color);
+  let ph=`<div class="info-bar" style="margin-bottom:6px"><i class="ti ti-info-circle" style="flex-shrink:0"></i>
+    <span>Minimal foto Before dan Nameplate wajib diambil sebelum submit.</span></div>
+    <div class="photo-grid">`;
+  cats.forEach(cat=>{
+    const key='t1-'+cat.replace(/\s+/g,'-').toLowerCase();
+    const img=S.photos[key];
+    ph+=`<div class="photo-slot" onclick="document.getElementById('ph-${key}').click()">
+      ${img?`<img src="${img}"><button class="pdel" onclick="event.stopPropagation();delPhoto('${key}')">×</button>`:`<i class="ti ti-camera-plus"></i><span>${cat}</span>`}
+      <input type="file" id="ph-${key}" accept="image/*" onchange="addPhoto('${key}',this)">
+    </div>`;
+  });
+  ph+='</div>';
+  cp.querySelector('.card-body').innerHTML=ph;
+  fc.appendChild(cp);
+
+  // Catatan awal
+  const cn=mkCard('ti-notes','Catatan awal teknisi',u.color);
+  cn.querySelector('.card-body').innerHTML=`
+    <div class="fg"><div class="fl">Catatan pemeriksaan awal</div>
+      <textarea class="fta" id="f-catatan-t1" rows="3" placeholder="Kondisi unit, hal yang perlu diperhatikan kepala teknisi..."></textarea>
+    </div>`;
+  fc.appendChild(cn);
+
+  // Submit button T1
+  const btnWrap=document.createElement('div');
+  btnWrap.innerHTML=`
+    <div class="warn-bar"><i class="ti ti-alert-triangle" style="flex-shrink:0"></i>
+      <span>Setelah submit, form pemeriksaan akan dikirim ke kepala teknisi untuk direview. Tunggu konfirmasi sebelum mulai pekerjaan.</span>
+    </div>`;
+  const btn=document.createElement('button');
+  btn.className='btn-submit-1';
+  btn.innerHTML='<i class="ti ti-send"></i> Submit Pemeriksaan ke Kepala Teknisi';
+  btn.onclick=submitTahap1;
+  btnWrap.appendChild(btn);
+  // Back button
+  const backBtn=document.createElement('button');
+  backBtn.className='btn-back';
+  backBtn.style.cssText='width:100%;margin-top:8px;justify-content:center';
+  backBtn.innerHTML='<i class="ti ti-arrow-left"></i> Kembali';
+  backBtn.onclick=()=>{saveFD();S.step--;renderTahap1();};
+  btnWrap.appendChild(backBtn);
+  fc.appendChild(btnWrap);
+}
+
+/* =============================================
+   SUBMIT TAHAP 1
+   ============================================= */
+async function submitTahap1(){
+  saveFD();
+  const fd=S.fd;
+  const ud=UNIT_DATA[S.unit];
+  const u=UNITS.find(x=>x.id===S.unit);
+  const jt=JOB_TYPES[S.unit]?.find(j=>j.id===S.jobType);
+
+  // Cek parameter wajib
+  const missing=[];
+  (ud.measures||[]).forEach((m,i)=>{
+    if(m.wajib && !S.mVals['mb-'+i] && !document.getElementById('mb-'+i)?.value) missing.push(m.l);
+  });
+  if(missing.length>0){
+    if(!confirm('⚠️ ' + missing.length + ' parameter wajib belum diisi:\n' + missing.join('\n') + '\n\nLanjutkan submit?')) return;
+  }
+
+  const btn=document.querySelector('.btn-submit-1');
+  if(btn){btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2"></i> Mengirim...';}
+
+  // Kumpulkan parameter
+  const params={};
+  (ud.measures||[]).forEach((m,i)=>{
+    const el=document.getElementById('mb-'+i);
+    const val=el?el.value:(S.mVals['mb-'+i]||'');
+    if(val) params[m.l]=val+' '+m.u+(S.mStatus['mb-'+i]==='ng'?' ⚠NG':'');
+  });
+  const paramStr=Object.entries(params).map(([k,v])=>k+': '+v).join(' | ');
+
+  // Kumpulkan keluhan
+  const kel=[];
+  (ud.keluhan||[]).forEach((k,i)=>{const cb=document.getElementById('ck-k'+i);if(cb&&cb.checked)kel.push(k);});
+  const kelStr=kel.join(', ')+(fd['f-keluhan-catatan']?', '+fd['f-keluhan-catatan']:'');
+
+  // Kumpulkan kondisi bermasalah
+  const masalah=[];
+  (ud.kondisi_fisik||[]).forEach((item,i)=>{const v=S.chk['f-'+i];if(v&&v!=='ok')masalah.push((v==='bad'?'❌':'⚠️')+item);});
+  (ud.kondisi_teknis||[]).forEach((item,i)=>{const v=S.chk['t-'+i];if(v&&v!=='ok')masalah.push((v==='bad'?'❌':'⚠️')+item);});
+
+  const payload={
+    wo_id:S.wo_id, tahap:'1-pemeriksaan',
+    unit:u.name, jenis_pekerjaan:jt?.name||S.jobType,
+    cust_nama:fd['f-cust-nama']||'', cust_telp:fd['f-cust-telp']||'',
+    cust_tipe:fd['f-cust-tipe']||'', cust_area:fd['f-cust-area']||'',
+    cust_alamat:fd['f-cust-alamat']||'',
+    unit_merk:fd['f-unit-merk']||'', unit_model:fd['f-unit-model']||'',
+    unit_kap:fd['f-unit-kap']||'', unit_tahun:fd['f-unit-tahun']||'',
+    unit_sn:fd['f-unit-sn']||'', unit_lokasi:fd['f-unit-lokasi']||'',
+    unit_last_svc:fd['f-unit-last-svc']||'', unit_last_tek:fd['f-unit-last-tek']||'',
+    teknisi:fd['f-tek-nama']||'', teknisi_wa:fd['f-tek-wa']||'',
+    keluhan:kelStr, kondisi_masalah:masalah.join('; '),
+    urgensi:fd['f-urgensi']||'sedang', risk:fd['f-risk']||'normal',
+    gejala:fd['f-gejala']||'',
+    param_sebelum:paramStr,
+    catatan_t1:fd['f-catatan-t1']||'',
+    rekomen_awal:fd['f-rekomen-awal']||'',
+    est_biaya:fd['f-est-biaya']||'',
+    est_waktu:fd['f-est-waktu']||'',
+    status:'menunggu-review',
+    timestamp:new Date().toISOString()
+  };
+
+  // Kirim ke Sheets
+  sendToSheets(payload);
+
+  // Simpan ke jobs lokal
+  const job={
+    id:S.wo_id, tahap:'1', unit:u.name, jenis:jt?.name||'',
+    merk:(fd['f-unit-merk']||'')+' '+(fd['f-unit-model']||''),
+    teknisi:fd['f-tek-nama']||'', teknisiWa:fd['f-tek-wa']||'',
+    customer:fd['f-cust-nama']||'', lokasi:fd['f-cust-area']||'',
+    keluhan:kelStr, kondisiMasalah:masalah.join('; '),
+    urgensi:payload.urgensi, risk:payload.risk,
+    gejala:payload.gejala, paramSebelum:paramStr,
+    catatanT1:payload.catatan_t1,
+    status:'menunggu-review',
+    keputusan:'', pesanKatek:'',
+    time:new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),
+    // Simpan state untuk Tahap 2
+    stateSnapshot: JSON.parse(JSON.stringify(S))
+  };
+  jobs.unshift(job);
+  saveJobs();
+  updateNotifDot();
+
+  // WA ke Kepala Teknisi
+  const ngParams=Object.entries(params).filter(([k,v])=>v.includes('NG')).map(([k])=>k);
+  const waMsg=encodeURIComponent(
+    '*[SIGAP — PEMERIKSAAN MASUK]*\n'+
+    'WO: '+S.wo_id+'\n'+
+    'Unit: '+u.name+' — '+jt?.name+'\n'+
+    'Teknisi: '+(fd['f-tek-nama']||'')+'\n'+
+    'Customer: '+(fd['f-cust-nama']||'')+' ('+(fd['f-cust-telp']||'')+')\n'+
+    'Alamat: '+(fd['f-cust-alamat']||'')+'\n'+
+    'Unit: '+(fd['f-unit-merk']||'')+' '+(fd['f-unit-model']||'')+'\n'+
+    'Keluhan: '+kelStr+'\n'+
+    'Urgensi: '+(fd['f-urgensi']||'').toUpperCase()+'\n'+
+    (masalah.length>0?'Kondisi bermasalah: '+masalah.slice(0,3).join(', ')+'\n':'')+
+    (ngParams.length>0?'⚠ Parameter NG: '+ngParams.join(', ')+'\n':'')+
+    '\n_Buka dashboard SIGAP untuk review & berikan keputusan_'
+  );
+
+  // Render waiting screen
+  const fc=document.getElementById('form-content');
+  document.getElementById('step-wrap').style.display='none';
+  fc.innerHTML=`
+    <div class="waiting-card anim">
+      <div class="waiting-icon pulse"><i class="ti ti-clock"></i></div>
+      <div class="waiting-title">Form Pemeriksaan Terkirim!</div>
+      <div class="waiting-wo">${S.wo_id}</div>
+      <div class="waiting-sub">
+        Laporan pemeriksaan sudah dikirim ke kepala teknisi.<br>
+        <b>Tunggu konfirmasi sebelum mulai pekerjaan.</b><br><br>
+        Kepala teknisi akan review parameter dan kondisi unit,<br>
+        lalu memberikan keputusan via sistem ini.
+      </div>
+    </div>
+    <button class="btn-wa" onclick="window.open('https://wa.me/${WA_KATEK}?text=${waMsg}','_blank')">
+      <i class="ti ti-brand-whatsapp"></i> Kirim notifikasi WA ke Kepala Teknisi
+    </button>
+    <button onclick="checkApproval('${S.wo_id}')" style="width:100%;background:var(--blue2);border:none;border-radius:var(--rmd);padding:12px;font-size:13px;font-weight:600;cursor:pointer;color:var(--blue3);font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px">
+      <i class="ti ti-refresh"></i> Cek status persetujuan
+    </button>
+    <div id="customer-confirm-section" style="display:none;margin-top:12px">
+      <div class="success-bar"><i class="ti ti-check" style="flex-shrink:0"></i>
+        <span>Kepala teknisi sudah approve! Sampaikan hasil pemeriksaan ke customer dan input jawaban customer di bawah.</span>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><i class="ti ti-user" style="color:var(--teal)"></i><span class="card-hdr-t">Konfirmasi Customer</span></div>
+        <div class="card-body">
+          <div class="fg"><div class="fl">Jawaban customer</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+              <button onclick="customerDecision('lanjut','${S.wo_id}')" style="background:var(--green2);border:2px solid var(--green3);border-radius:var(--rmd);padding:14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--green3);font-family:var(--font)">
+                ✅ Customer Setuju Lanjut
+              </button>
+              <button onclick="customerDecision('stop','${S.wo_id}')" style="background:var(--red2);border:2px solid var(--red3);border-radius:var(--rmd);padding:14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--red3);font-family:var(--font)">
+                ❌ Customer Stop / Tidak Lanjut
+              </button>
+            </div>
+          </div>
+          <div class="fg"><div class="fl">Catatan dari customer</div>
+            <input class="fi" id="catatan-customer" placeholder="Alasan customer / catatan tambahan...">
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-new" onclick="resetForm()">
+      <i class="ti ti-plus"></i> Buat WO baru
+    </button>`;
+}
+
+function checkApproval(woId){
+  // Fetch status langsung dari Google Sheets
+  const btn = document.querySelector('[onclick*="checkApproval"]');
+  if(btn){ btn.innerHTML = '<i class="ti ti-loader-2"></i> Mengecek...'; btn.style.pointerEvents='none'; }
+
+  const cbName = 'sigap_chk_' + Date.now();
+  const script = document.createElement('script');
+  const timeout = setTimeout(()=>{
+    delete window[cbName];
+    try{ document.body.removeChild(script); }catch(e){}
+    // Fallback ke local jobs
+    checkApprovalLocal(woId);
+    if(btn){ btn.innerHTML = '<i class="ti ti-refresh"></i> Cek status persetujuan'; btn.style.pointerEvents='auto'; }
+  }, 8000);
+
+  window[cbName] = function(data){
+    clearTimeout(timeout);
+    delete window[cbName];
+    try{ document.body.removeChild(script); }catch(e){}
+    if(btn){ btn.innerHTML = '<i class="ti ti-refresh"></i> Cek status persetujuan'; btn.style.pointerEvents='auto'; }
+
+    if(data && data.jobs){
+      // Cari WO di data sheets
+      const sheetJob = data.jobs.find(j => j.id === woId);
+      if(sheetJob){
+        // Update local jobs
+        const localIdx = jobs.findIndex(j=>j.id===woId);
+        if(localIdx>-1){
+          jobs[localIdx].status = sheetJob.status;
+          jobs[localIdx].pesanKatek = sheetJob.pesanKatek;
+          saveJobs();
+        }
+        processApprovalStatus(woId, sheetJob.status, sheetJob.pesanKatek||'');
+      } else {
+        checkApprovalLocal(woId);
+      }
+    } else {
+      checkApprovalLocal(woId);
+    }
+  };
+
+  script.src = GAS_URL + '?action=getJobs&callback=' + cbName;
+  script.onerror = ()=>{ clearTimeout(timeout); checkApprovalLocal(woId); };
+  document.body.appendChild(script);
+}
+
+function checkApprovalLocal(woId){
+  const job = jobs.find(j=>j.id===woId);
+  const status = job ? job.status : 'menunggu-review';
+  const pesan = job ? (job.pesanKatek||'') : '';
+  processApprovalStatus(woId, status, pesan);
+}
+
+function processApprovalStatus(woId, status, pesan){
+  if(status==='disetujui'){
+    const section=document.getElementById('customer-confirm-section');
+    if(section) section.style.display='block';
+    const adminMsg=sessionStorage.getItem('sigap_admin_msg_'+woId);
+    if(adminMsg) window.open('https://wa.me/'+WA_ADMIN+'?text='+adminMsg,'_blank');
+  } else if(status==='customer-lanjut'){
+    const job=jobs.find(j=>j.id===woId);
+    S=job&&job.stateSnapshot?job.stateSnapshot:S;
+    S.tahap=2; S.step=0;
+    renderTahap2();
+  } else if(status==='customer-stop'){
+    alert('Customer memilih stop. Pekerjaan selesai sampai pemeriksaan. Catat sebagai Diagnosa Only.');
+    resetForm();
+  } else if(status==='revisi'){
+    alert('Kepala teknisi meminta revisi. Pesan: '+(pesan||'Ulangi pemeriksaan'));
+    const job=jobs.find(j=>j.id===woId);
+    if(job&&job.stateSnapshot){ S=job.stateSnapshot; S.tahap=1; S.step=1; renderTahap1(); }
+  } else if(status==='ditahan'){
+    alert('Pekerjaan ditahan sementara. Pesan: '+(pesan||'Tunggu instruksi lebih lanjut'));
+  } else if(status==='ditolak'){
+    alert('Pekerjaan ditolak. Pesan: '+(pesan||'Hubungi kepala teknisi'));
+  } else {
+    alert('Belum ada keputusan dari kepala teknisi. Silakan tunggu atau hubungi kepala teknisi.');
+  }
+}
+
+function customerDecision(decision, woId){
+  const catatan = document.getElementById('catatan-customer')?.value || '';
+  const jobIdx = jobs.findIndex(j=>j.id===woId);
+  if(jobIdx === -1) return;
+
+  const status = decision === 'lanjut' ? 'customer-lanjut' : 'customer-stop';
+  jobs[jobIdx].status = status;
+  jobs[jobIdx].catatanCustomer = catatan;
+  saveJobs();
+
+  // Update ke Sheets
+  sendToSheets({ action:'updateStatus', fno:woId, status, pesan_katek:'Customer: '+decision+(catatan?' — '+catatan:'') });
+
+  if(decision === 'lanjut'){
+    // WA ke katek & admin: customer setuju
+    const job = jobs[jobIdx];
+    const waMsg = encodeURIComponent('[SIGAP - CUSTOMER SETUJU LANJUT]' + '\nWO: ' + woId + '\nCustomer: ' + job.customer + '\nTeknisi: ' + job.teknisi + ' akan mulai pekerjaan.' + (catatan ? '\nCatatan: ' + catatan : '') + '\n\nTeknisi akan lanjut ke Tahap 2');
+    window.open('https://wa.me/'+WA_KATEK+'?text='+waMsg,'_blank');
+
+    // Lanjut ke Tahap 2
+    S = jobs[jobIdx].stateSnapshot || S;
+    S.tahap=2; S.step=0;
+    renderTahap2();
+  } else {
+    // Customer stop
+    const job = jobs[jobIdx];
+    const waMsg = encodeURIComponent('[SIGAP - CUSTOMER STOP]' + '\nWO: ' + woId + '\nCustomer: ' + job.customer + '\nPekerjaan selesai sampai pemeriksaan (Diagnosa Only).' + (catatan ? '\nAlasan: ' + catatan : '') + '\n\nDicatat sebagai Diagnosa Only');
+    window.open('https://wa.me/'+WA_KATEK+'?text='+waMsg,'_blank');
+    alert('Pekerjaan selesai. Customer memilih tidak melanjutkan perbaikan. Tercatat sebagai Diagnosa Only.');
+    resetForm();
+  }
+}
+
+/* =============================================
+   TAHAP 2 — LAPORAN HASIL
+   ============================================= */
+const STEPS_T2 = ['Analisa','Tindakan & Sesudah','Foto & Confidence','Critical Notes'];
+
+function renderTahap2(){
+  const u=UNITS.find(x=>x.id===S.unit);
+  updateAppBar('Tahap 2 — Laporan Hasil',u.name+' — '+S.wo_id,u.icon,u.color+'40');
+  document.getElementById('ab-badge').textContent=S.wo_id;
+  renderStepDots(STEPS_T2, S.step);
+  const fc=document.getElementById('form-content');
+  fc.innerHTML=''; fc.classList.remove('anim'); void fc.offsetWidth; fc.classList.add('anim');
+  const tb=document.createElement('div');
+  tb.className='tahap-badge';
+  tb.innerHTML=`<div class="tb-num" style="background:var(--teal2);color:var(--teal3)">2</div>
+    <div><div class="tb-title">Laporan Hasil Pekerjaan</div><div class="tb-sub">Isi setelah pekerjaan selesai</div></div>
+    <span class="tb-status" style="background:var(--green2);color:var(--green3)">✅ Disetujui</span>`;
+  fc.appendChild(tb);
+  if(S.step===0) renderT2S0(fc);
+  else if(S.step===1) renderT2S1(fc);
+  else if(S.step===2) renderT2S2(fc);
+  else if(S.step===3) renderT2S3(fc);
+  restoreFD();
+  if(S.step < STEPS_T2.length-1){
+    addNavBtns(fc, S.step>0, ()=>{saveFD();S.step--;renderTahap2();}, ()=>{saveFD();S.step++;renderTahap2();}, false);
+  }
+}
+
+function renderT2S0(fc){
+  const ud=UNIT_DATA[S.unit];
+  const u=UNITS.find(x=>x.id===S.unit);
+  // Tampilkan ringkasan parameter sebelum sebagai referensi
+  if(S.fd['_param_sebelum']||S.stateSnapshot){
+    const cr=mkCard('ti-arrow-down-circle','Referensi parameter SEBELUM','var(--amber)');
+    cr.querySelector('.card-body').innerHTML=`
+      <div class="info-bar" style="margin-bottom:0"><i class="ti ti-info-circle" style="flex-shrink:0"></i>
+        <span>Data dari Tahap 1 — gunakan sebagai referensi pengisian sesudah.</span></div>`;
+    fc.appendChild(cr);
+  }
+  // Penyebab
+  const cp=mkCard('ti-brain','A. Analisa penyebab',u.color);
+  let ph='<div class="fl" style="margin-bottom:5px">Pilih penyebab yang ditemukan</div>';
+  const penyebabList=['Freon kurang/bocor','Komponen rusak/lemah','Kotoran/tersumbat','Instalasi tidak tepat','Keausan normal','Kerusakan mekanik','Kerusakan elektrik/PCB','Pemakaian tidak tepat','Lainnya'];
+  penyebabList.forEach((p,i)=>{
+    const on=S.penyebab.includes(i);
+    ph+=`<div class="ci${on?' on':''}" id="ci-p${i}" onclick="togglePenyebab(${i})"><input type="checkbox" ${on?'checked':''} onclick="event.stopPropagation()"><span class="ci-text">${p}</span></div>`;
+  });
+  ph+=`<div class="fg" style="margin-top:6px"><div class="fl">Keterangan penyebab teknis</div>
+    <textarea class="fta" id="f-penyebab-detail" rows="2" placeholder="Analisa teknis detail..."></textarea></div>`;
+  cp.querySelector('.card-body').innerHTML=ph;
+  fc.appendChild(cp);
+}
+
+function renderT2S1(fc){
+  const ud=UNIT_DATA[S.unit];
+  const u=UNITS.find(x=>x.id===S.unit);
+  const jobKey='tindakan_'+S.jobType;
+  const tindakanList=ud[jobKey]||ud.tindakan_service||[];
+  // Tindakan
+  const ct=mkCard('ti-tool','B. Tindakan yang dilakukan',u.color);
+  let th='<div class="fl" style="margin-bottom:5px">Centang semua tindakan yang dilakukan</div>';
+  tindakanList.forEach((t,i)=>{
+    const on=S.tindakan.includes(i);
+    th+=`<div class="ci${on?' on':''}" id="ci-t${i}" onclick="toggleTindakan(${i})"><input type="checkbox" ${on?'checked':''} onclick="event.stopPropagation()"><span class="ci-text">${t}</span></div>`;
+  });
+  th+=`<div class="fg" style="margin-top:6px"><div class="fl">Tindakan lain</div>
+    <input class="fi" id="f-tindakan-lain" placeholder="Tindakan tambahan..."></div>
+    <div class="fg"><div class="fl">Sparepart yang diganti</div>
+    <input class="fi" id="f-sparepart" placeholder="Nama & jumlah part..."></div>`;
+  ct.querySelector('.card-body').innerHTML=th;
+  fc.appendChild(ct);
+
+  // Parameter sesudah dengan before/after compare
+  const cma=mkCard('ti-bolt','C. Parameter teknis SESUDAH pekerjaan',u.color);
+  let mah='<div class="success-bar" style="margin-bottom:8px"><i class="ti ti-check" style="flex-shrink:0"></i><span>Isi nilai sesudah — sistem akan membandingkan dengan nilai sebelum.</span></div>';
+  (ud.measures||[]).forEach((m,i)=>{
+    const bval=S.mVals['mb-'+i]||'—';
+    mah+=`<div class="mr">
+      <div class="mr-label" style="margin-bottom:6px">${m.l}</div>
+      <div class="ba-row">
+        <div class="ba-box ba-before">
+          <div class="ba-label"><i class="ti ti-arrow-down"></i> Sebelum</div>
+          <div class="ba-val">${bval}</div>
+          <div class="ba-unit">${m.u}</div>
+        </div>
+        <div class="ba-box ba-after">
+          <div class="ba-label"><i class="ti ti-arrow-up"></i> Sesudah</div>
+          <input class="ba-input" id="ma-${i}" placeholder="Isi nilai..." type="${['V','A','°C','psi','bar','Ω','W','µF','m'].includes(m.u)?'number':'text'}" inputmode="decimal" value="${S.mVals['ma-'+i]||''}">
+          <div class="ba-unit">${m.u}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  // Biaya & waktu
+  mah+=`<div class="frow" style="margin-top:8px">
+    <div class="fg"><div class="fl">Est. biaya jasa (Rp)</div><input class="fi" type="number" id="f-jasa" placeholder="0"></div>
+    <div class="fg"><div class="fl">Est. biaya part (Rp)</div><input class="fi" type="number" id="f-part" placeholder="0"></div>
+  </div>
+  <div class="frow">
+    <div class="fg"><div class="fl">Status akhir pekerjaan</div>
+      <select class="fsel" id="f-status-akhir">
+        <option>Selesai sempurna</option><option>Selesai dengan catatan</option>
+        <option>Perlu tindak lanjut</option><option>Perlu observasi</option>
+      </select>
+    </div>
+    <div class="fg"><div class="fl">Waktu pengerjaan</div>
+      <select class="fsel" id="f-waktu">
+        <option>< 1 jam</option><option>1–2 jam</option><option>2–4 jam</option>
+        <option>Lebih dari 4 jam</option><option>Multi-hari</option>
+      </select>
+    </div>
+  </div>`;
+  cma.querySelector('.card-body').innerHTML=mah;
+  fc.appendChild(cma);
+}
+
+function renderT2S2(fc){
+  const ud=UNIT_DATA[S.unit];
+  const u=UNITS.find(x=>x.id===S.unit);
+  const cats=ud.photos_t2||['After','Komponen diganti','Hasil akhir'];
+  const cp=mkCard('ti-camera','Foto dokumentasi Tahap 2',u.color);
+  let ph=`<div class="photo-grid">`;
+  cats.forEach(cat=>{
+    const key='t2-'+cat.replace(/\s+/g,'-').toLowerCase();
+    const img=S.photos[key];
+    ph+=`<div class="photo-slot" onclick="document.getElementById('ph2-${key}').click()">
+      ${img?`<img src="${img}"><button class="pdel" onclick="event.stopPropagation();delPhoto('${key}')">×</button>`:`<i class="ti ti-camera-plus"></i><span>${cat}</span>`}
+      <input type="file" id="ph2-${key}" accept="image/*" onchange="addPhoto('${key}',this)">
+    </div>`;
+  });
+  ph+='</div>';
+  cp.querySelector('.card-body').innerHTML=ph;
+  fc.appendChild(cp);
+
+  // Confidence
+  const conf_opts=[
+    {v:'yakin',l:'✅ Yakin',d:'Diagnosa & hasil pasti',bg:'#EAF3DE',tc:'#27500A'},
+    {v:'indikasi',l:'🔵 Indikasi',d:'Kemungkinan besar OK',bg:'#E6F1FB',tc:'#0C447C'},
+    {v:'observasi',l:'👁 Perlu observasi',d:'Perlu pantau lanjut',bg:'#FAEEDA',tc:'#633806'},
+    {v:'belum-pasti',l:'❓ Belum pasti',d:'Perlu diagnosa lanjut',bg:'#FCEBEB',tc:'#501313'},
+  ];
+  const cconf=mkCard('ti-circle-check','Confidence hasil pekerjaan',u.color);
+  let cfh='<div class="conf-grid">';
+  conf_opts.forEach(opt=>{
+    const sel=S.confidence===opt.v;
+    cfh+=`<div class="conf-btn${sel?' sel':''}" id="conf-${opt.v}" style="background:${opt.bg};border-color:${sel?opt.tc:'transparent'}" onclick="setConf('${opt.v}','${opt.tc}')">
+      <div class="conf-label" style="color:${opt.tc}">${opt.l}</div>
+      <div class="conf-desc" style="color:${opt.tc}">${opt.d}</div>
+    </div>`;
+  });
+  cfh+='</div>';
+  cconf.querySelector('.card-body').innerHTML=cfh;
+  fc.appendChild(cconf);
+}
+
+function renderT2S3(fc){
+  const ud=UNIT_DATA[S.unit];
+  const u=UNITS.find(x=>x.id===S.unit);
+  const cc=mkCard('ti-alert-triangle','Critical unit notes',u.color);
+  let ch=`<div class="crit-box">
+    <div class="crit-hdr"><i class="ti ti-alert-triangle"></i> Tandai kondisi kritis — akan muncul di service berikutnya</div>`;
+  (ud.critical||[]).forEach((note,i)=>{
+    const on=S.critical.includes(i);
+    ch+=`<div class="crit-note"><input type="checkbox" id="crit-${i}" ${on?'checked':''} onchange="toggleCritical(${i})"><label for="crit-${i}" style="cursor:pointer">${note}</label></div>`;
+  });
+  ch+=`</div>
+    <div class="fg" style="margin-top:8px"><div class="fl">Catatan kritis tambahan</div>
+      <textarea class="fta" id="f-critical-lain" rows="2" placeholder="Kondisi kritis lain..." style="background:#FFFBF0;border-color:#EF9F27"></textarea>
+    </div>`;
+  cc.querySelector('.card-body').innerHTML=ch;
+  fc.appendChild(cc);
+
+  const cr=mkCard('ti-notes','Rekomendasi & catatan akhir',u.color);
+  cr.querySelector('.card-body').innerHTML=`
+    <div class="fg"><div class="fl">Rekomendasi next service</div>
+      <textarea class="fta" id="f-rekomendasi" rows="2" placeholder="Saran untuk service berikutnya..."></textarea>
+    </div>
+    <div class="fg"><div class="fl">Catatan akhir teknisi</div>
+      <textarea class="fta" id="f-catatan-tek" rows="3" placeholder="Ringkasan, hal penting untuk teknisi berikutnya..."></textarea>
+    </div>`;
+  fc.appendChild(cr);
+
+  const btnWrap=document.createElement('div');
+  const btn=document.createElement('button');
+  btn.className='btn-submit-2';
+  btn.innerHTML='<i class="ti ti-send"></i> Submit Laporan Hasil ke Kepala Teknisi';
+  btn.onclick=submitTahap2;
+  btnWrap.appendChild(btn);
+  const backBtn=document.createElement('button');
+  backBtn.className='btn-back';
+  backBtn.style.cssText='width:100%;margin-top:8px;justify-content:center';
+  backBtn.innerHTML='<i class="ti ti-arrow-left"></i> Kembali';
+  backBtn.onclick=()=>{saveFD();S.step--;renderTahap2();};
+  btnWrap.appendChild(backBtn);
+  fc.appendChild(btnWrap);
+}
+
+/* =============================================
+   SUBMIT TAHAP 2
+   ============================================= */
+async function submitTahap2(){
+  saveFD();
+  const fd=S.fd;
+  const ud=UNIT_DATA[S.unit];
+  const u=UNITS.find(x=>x.id===S.unit);
+  const jt=JOB_TYPES[S.unit]?.find(j=>j.id===S.jobType);
+
+  const btn=document.querySelector('.btn-submit-2');
+  if(btn){btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2"></i> Mengirim...';}
+
+  const tindakanText=(S.tindakan.map(i=>(ud['tindakan_'+S.jobType]||ud.tindakan_service||[])[i]).filter(Boolean).join(', ')+(fd['f-tindakan-lain']?', '+fd['f-tindakan-lain']:'')).trim();
+  const penyebabList=['Freon kurang/bocor','Komponen rusak/lemah','Kotoran/tersumbat','Instalasi tidak tepat','Keausan normal','Kerusakan mekanik','Kerusakan elektrik/PCB','Pemakaian tidak tepat','Lainnya'];
+  const penyebabText=S.penyebab.map(i=>penyebabList[i]).filter(Boolean).join(', ')+(fd['f-penyebab-detail']?', '+fd['f-penyebab-detail']:'');
+  const criticalText=S.critical.map(i=>(ud.critical||[])[i]).filter(Boolean).join('; ')+(fd['f-critical-lain']?'; '+fd['f-critical-lain']:'');
+  const jasa=parseInt(fd['f-jasa']||0);
+  const part=parseInt(fd['f-part']||0);
+  const total=jasa+part;
+
+  const paramSesudah=(ud.measures||[]).map((m,i)=>{
+    const val=S.mVals['ma-'+i]||document.getElementById('ma-'+i)?.value||'';
+    return val?m.l+': '+val+' '+m.u:'';
+  }).filter(Boolean).join(' | ');
+
+  const payload={
+    wo_id:S.wo_id, tahap:'2-laporan',
+    unit:u.name, jenis_pekerjaan:jt?.name||'',
+    teknisi:fd['f-tek-nama']||'', teknisi_wa:fd['f-tek-wa']||'',
+    cust_nama:fd['f-cust-nama']||'', cust_telp:fd['f-cust-telp']||'',
+    cust_alamat:fd['f-cust-alamat']||'',
+    unit_merk:fd['f-unit-merk']||'', unit_model:fd['f-unit-model']||'',
+    penyebab:penyebabText, tindakan:tindakanText,
+    sparepart:fd['f-sparepart']||'',
+    param_sesudah:paramSesudah,
+    biaya_jasa:jasa, biaya_part:part, total_biaya:total,
+    status_akhir:fd['f-status-akhir']||'',
+    waktu:fd['f-waktu']||'',
+    confidence:S.confidence||'',
+    critical_notes:criticalText,
+    rekomendasi:fd['f-rekomendasi']||'',
+    catatan_teknisi:fd['f-catatan-tek']||'',
+    status:'selesai-menunggu-qc',
+    timestamp:new Date().toISOString()
+  };
+
+  sendToSheets(payload);
+
+  // Update job di lokal
+  const jobIdx=jobs.findIndex(j=>j.id===S.wo_id);
+  if(jobIdx>-1){
+    jobs[jobIdx].tahap='2';
+    jobs[jobIdx].status='selesai-menunggu-qc';
+    jobs[jobIdx].tindakan=tindakanText;
+    jobs[jobIdx].penyebab=penyebabText;
+    jobs[jobIdx].paramSesudah=paramSesudah;
+    jobs[jobIdx].biaya=total;
+    jobs[jobIdx].confidence=S.confidence||'';
+    jobs[jobIdx].criticalNotes=criticalText;
+    jobs[jobIdx].rekomendasi=fd['f-rekomendasi']||'';
+  }
+  saveJobs();
+  updateNotifDot();
+
+  // WA ke Katek + Owner
+  const waMsg=encodeURIComponent(
+    '*[SIGAP — LAPORAN HASIL PEKERJAAN]*\n'+
+    'WO: '+S.wo_id+'\n'+
+    'Unit: '+u.name+' — '+jt?.name+'\n'+
+    'Teknisi: '+(fd['f-tek-nama']||'')+'\n'+
+    'Customer: '+(fd['f-cust-nama']||'')+'\n'+
+    'Penyebab: '+penyebabText+'\n'+
+    'Tindakan: *'+tindakanText+'*\n'+
+    'Confidence: '+(S.confidence||'')+'\n'+
+    'Est. biaya: Rp '+total.toLocaleString('id-ID')+'\n'+
+    'Status: '+(fd['f-status-akhir']||'')+'\n'+
+    (criticalText?'⚠ Kritis: '+criticalText+'\n':'')+
+    '\n_Buka dashboard SIGAP untuk QC final_'
+  );
+
+  // Render success
+  const fc=document.getElementById('form-content');
+  document.getElementById('step-wrap').style.display='none';
+  fc.innerHTML=`
+    <div class="success-card anim">
+      <div style="font-size:32px;color:var(--teal);margin-bottom:8px"><i class="ti ti-circle-check"></i></div>
+      <div style="font-size:16px;font-weight:700;color:var(--teal3)">Laporan Hasil Terkirim!</div>
+      <div style="font-size:12px;color:var(--teal);margin-top:5px">${u.name} — ${jt?.name}</div>
+      <div style="font-size:11px;color:var(--teal);margin-top:3px;opacity:.8">${fd['f-unit-merk']||''} · ${fd['f-cust-nama']||''}</div>
+      <div style="font-size:11px;color:var(--teal);margin-top:2px;opacity:.7">Total: Rp ${total.toLocaleString('id-ID')} · ${S.confidence||''}</div>
+      ${criticalText?`<div style="background:#FFF3CD;border-radius:6px;padding:7px 10px;margin-top:8px;font-size:11px;color:var(--amber3)">⚠ ${criticalText.split(';')[0]}</div>`:''}
+    </div>
+    <button class="btn-wa" onclick="window.open('https://wa.me/${WA_KATEK}?text=${waMsg}','_blank')">
+      <i class="ti ti-brand-whatsapp"></i> Kirim notifikasi WA ke Kepala Teknisi
+    </button>
+    <button class="btn-new" onclick="resetForm()">
+      <i class="ti ti-plus"></i> Work order baru
+    </button>`;
+}
+
+/* =============================================
+   DASHBOARD — KEPALA TEKNISI & OWNER
+   ============================================= */
+const DASH_FILTERS=[
+  {k:'semua',l:'Semua'},{k:'menunggu-review',l:'🔔 Perlu Review'},
+  {k:'disetujui',l:'✅ Disetujui'},{k:'revisi',l:'🔄 Revisi'},
+  {k:'selesai-menunggu-qc',l:'📋 QC Final'},{k:'selesai',l:'Selesai'},
+  ...UNITS.map(u=>({k:'unit-'+u.id,l:u.name}))
+];
+
+async function renderDash(){
+  const dc=document.getElementById('dash-content');
+  dc.innerHTML=`<div class="empty"><i class="ti ti-loader-2"></i>Memuat...</div>`;
+  await fetchFromSheets();
+
+  const total=jobs.length;
+  const needReview=jobs.filter(j=>j.status==='menunggu-review').length;
+  const approved=jobs.filter(j=>j.status==='disetujui').length;
+  const qc=jobs.filter(j=>j.status==='selesai-menunggu-qc').length;
+  const done=jobs.filter(j=>j.status==='selesai').length;
+  const urgent=jobs.filter(j=>j.urgensi==='tinggi').length;
+
+  let h='';
+  if(role==='owner'){
+    h+=`<div class="owner-banner">
+      <div class="ob-icon"><i class="ti ti-crown"></i></div>
+      <div><div class="ob-title">Owner Dashboard</div><div class="ob-sub">Monitor semua aktivitas — read only</div></div>
+      <div class="ob-badge">${needReview} perlu review</div>
+    </div>`;
+  } else {
+    h+=`<div class="dash-hdr">
+      <div class="dh-top">
+        <div><div class="dh-title">Dashboard Kepala Teknisi</div>
+          <div class="dh-sub">${new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'})}</div>
+        </div>
+        <div class="dh-badge">${needReview} perlu review</div>
+      </div>
+      <div class="dh-stats">
+        <div class="dhs"><div class="dhs-val">${total}</div><div class="dhs-label">Total WO</div></div>
+        <div class="dhs"><div class="dhs-val" style="color:#FFF176">${needReview}</div><div class="dhs-label">Perlu Review</div></div>
+        <div class="dhs"><div class="dhs-val" style="color:#A5F3C8">${approved}</div><div class="dhs-label">Disetujui</div></div>
+        <div class="dhs"><div class="dhs-val" style="color:#93C5FD">${qc}</div><div class="dhs-label">QC Final</div></div>
+        <div class="dhs"><div class="dhs-val" style="color:#FCA5A5">${urgent}</div><div class="dhs-label">Urgen</div></div>
+        <div class="dhs"><div class="dhs-val" style="color:#A5F3C8">${done}</div><div class="dhs-label">Selesai</div></div>
+      </div>
+    </div>`;
+  }
+
+  h+=`<div class="dash-filters" id="d-filters"></div><div id="d-jobs"></div>`;
+  dc.innerHTML=h;
+
+  document.getElementById('d-filters').innerHTML=DASH_FILTERS.map(f=>
+    `<button class="dchip${dashFilter===f.k?' active':''}" onclick="setDashFilter('${f.k}',this)">${f.l}</button>`
+  ).join('');
+
+  renderJobCards();
+  updateNotifDot();
+}
+
+function setDashFilter(k,btn){
+  dashFilter=k;
+  document.querySelectorAll('.dchip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  renderJobCards();
+}
+
+function renderJobCards(){
+  const el=document.getElementById('d-jobs');
+  if(!el) return;
+  const f=dashFilter;
+  const filtered=jobs.filter(j=>{
+    if(f==='semua') return true;
+    if(f.startsWith('unit-')) return j.unit===UNITS.find(u=>u.id===f.replace('unit-',''))?.name;
+    return j.status===f;
+  });
+  if(!filtered.length){el.innerHTML='<div class="empty"><i class="ti ti-inbox"></i>Tidak ada pekerjaan</div>';return;}
+
+  const statusMap={
+    'menunggu-review':{bg:'#FAEEDA',tc:'#633806',l:'🔔 Perlu Review'},
+    'disetujui':{bg:'#EAF3DE',tc:'#27500A',l:'✅ Disetujui'},
+    'revisi':{bg:'#E6F1FB',tc:'#0C447C',l:'🔄 Revisi'},
+    'ditahan':{bg:'#EEEDFE',tc:'#3C3489',l:'⏸ Ditahan'},
+    'ditolak':{bg:'#FCEBEB',tc:'#501313',l:'❌ Ditolak'},
+    'selesai-menunggu-qc':{bg:'#E6F1FB',tc:'#0C447C',l:'📋 QC Final'},
+    'selesai':{bg:'#EAF3DE',tc:'#27500A',l:'✅ Selesai'},
+  };
+
+  el.innerHTML=filtered.map((j,i)=>{
+    const s=statusMap[j.status]||{bg:'#F1EFE8',tc:'#888780',l:j.status};
+    const isTahap2=j.tahap==='2';
+    const ngCount=(j.paramSebelum||'').split('NG').length-1;
+    const masalahCount=(j.kondisiMasalah||'').split(';').filter(Boolean).length;
+
+    // Parse parameter untuk review
+    let paramReviewHtml='';
+    if(j.paramSebelum){
+      const params=j.paramSebelum.split('|').slice(0,4);
+      paramReviewHtml='<div class="param-review">'+params.map(p=>{
+        const isNG=p.includes('NG');
+        const parts=p.trim().split(':');
+        return `<div class="pr-item${isNG?' ng':''}">
+          <div class="pr-label">${(parts[0]||'').trim()}</div>
+          <div class="pr-val">${(parts[1]||'—').trim()}</div>
+        </div>`;
+      }).join('')+'</div>';
+    }
+
+    const canDecide = role==='katek' && j.status==='menunggu-review';
+    const isAdmin = role==='admin';
+    const canInputEstimasi = isAdmin && (j.status==='disetujui'||j.status==='menunggu-review');
+    const canQC = role==='katek' && j.status==='selesai-menunggu-qc';
+
+    return `<div class="job-card anim">
+      <div class="jc-top">
+        <div>
+          <div class="jc-unit">${j.unit} <span style="font-size:10px;color:var(--g4)">${j.jenis||''}</span> <span class="jc-id">${j.id}</span></div>
+          <div class="jc-badges">
+            <span class="bdg" style="background:${s.bg};color:${s.tc}">${s.l}</span>
+            <span class="bdg" style="background:var(--blue2);color:var(--blue3)">Tahap ${j.tahap||'1'}</span>
+            ${j.urgensi==='tinggi'?'<span class="bdg" style="background:var(--red2);color:var(--red3)">🔴 Urgen</span>':''}
+            ${ngCount>0?`<span class="bdg" style="background:var(--red2);color:var(--red3)">⚠ ${ngCount} NG</span>`:''}
+          </div>
+        </div>
+        <div class="jc-time">${j.time||''}</div>
+      </div>
+      <div class="jc-meta">
+        <span><i class="ti ti-tool" style="font-size:11px"></i>${j.teknisi||'-'}</span>
+        <span><i class="ti ti-user" style="font-size:11px"></i>${j.customer||'-'}</span>
+        <span><i class="ti ti-map-pin" style="font-size:11px"></i>${j.lokasi||'-'}</span>
+      </div>
+      ${paramReviewHtml}
+      ${masalahCount>0?`<div style="font-size:11px;color:var(--amber3);margin-top:6px;padding:5px 8px;background:var(--amber2);border-radius:var(--rsm)">⚠ ${masalahCount} kondisi bermasalah: ${(j.kondisiMasalah||'').split(';').slice(0,2).join(', ')}</div>`:''}
+      <div class="jc-detail" id="jd-${i}">
+        <div class="jd-sec">
+          <div class="jd-sec-title">Detail pemeriksaan</div>
+          <div class="jd-row"><span class="jd-label">Unit</span><span class="jd-val">${j.merk||'-'}</span></div>
+          <div class="jd-row"><span class="jd-label">Keluhan</span><span class="jd-val">${j.keluhan||'-'}</span></div>
+          ${j.gejala?`<div class="jd-row"><span class="jd-label">Gejala awal</span><span class="jd-val">${j.gejala}</span></div>`:''}
+          ${isTahap2?`<div class="jd-row"><span class="jd-label">Penyebab</span><span class="jd-val">${j.penyebab||'-'}</span></div>
+          <div class="jd-row"><span class="jd-label">Tindakan</span><span class="jd-val">${j.tindakan||'-'}</span></div>
+          <div class="jd-row"><span class="jd-label">Confidence</span><span class="jd-val">${j.confidence||'-'}</span></div>
+          <div class="jd-row"><span class="jd-label">Total biaya</span><span class="jd-val">Rp ${(j.biaya||0).toLocaleString('id-ID')}</span></div>`:''}
+          ${j.catatanT1?`<div class="jd-row"><span class="jd-label">Catatan teknisi</span><span class="jd-val">${j.catatanT1}</span></div>`:''}
+        </div>
+        ${j.criticalNotes?`<div class="jd-sec">
+          <div class="jd-sec-title">⚠ Critical notes</div>
+          <div style="background:#FFF3CD;border-radius:var(--rsm);padding:7px 10px;font-size:11px;color:var(--amber3)">${j.criticalNotes}</div>
+        </div>`:''}
+        ${j.keputusan?`<div class="jd-sec">
+          <div class="jd-sec-title">Keputusan kepala teknisi</div>
+          <div style="font-size:12px;color:var(--g6);padding:4px 0"><b>${j.keputusan}</b>${j.pesanKatek?' — '+j.pesanKatek:''}</div>
+        </div>`:''}
+        ${canDecide?`
+        <div class="decision-wrap">
+          <div class="decision-title">Berikan keputusan</div>
+          <div class="decision-msg">
+            <textarea id="msg-${i}" rows="2" placeholder="Pesan/instruksi untuk teknisi (opsional)..." style="width:100%;background:#fff;border:1px solid var(--g2);border-radius:var(--rsm);padding:8px 10px;font-size:12px;color:var(--g9);font-family:var(--font);outline:none;resize:none;line-height:1.5"></textarea>
+          </div>
+          <div class="dec-btns">
+            <button class="dec-btn dec-approve" onclick="giveDecision(${i},'disetujui')"><i class="ti ti-check"></i> Setujui & Lanjutkan</button>
+            <button class="dec-btn dec-revisi" onclick="giveDecision(${i},'revisi')"><i class="ti ti-refresh"></i> Minta Revisi</button>
+            <button class="dec-btn dec-tahan" onclick="giveDecision(${i},'ditahan')"><i class="ti ti-pause"></i> Tahan Dulu</button>
+            <button class="dec-btn dec-tolak" onclick="giveDecision(${i},'ditolak')"><i class="ti ti-x"></i> Tolak</button>
+          </div>
+        </div>`:''}
+        ${canQC?`
+        <div class="decision-wrap">
+          <div class="decision-title">QC Laporan Hasil</div>
+          <div class="decision-msg">
+            <textarea id="msg-${i}" rows="2" placeholder="Catatan QC..." style="width:100%;background:#fff;border:1px solid var(--g2);border-radius:var(--rsm);padding:8px 10px;font-size:12px;color:var(--g9);font-family:var(--font);outline:none;resize:none;line-height:1.5"></textarea>
+          </div>
+          <div class="dec-btns">
+            <button class="dec-btn dec-approve" onclick="giveDecision(${i},'selesai')"><i class="ti ti-check"></i> Pekerjaan Selesai</button>
+            <button class="dec-btn dec-revisi" onclick="giveDecision(${i},'revisi')"><i class="ti ti-refresh"></i> Perlu Perbaikan</button>
+          </div>
+        </div>`:''}
+        ${canConfirmCustomer?`
+        <div class="decision-wrap" style="background:var(--green2);border:1.5px solid #5DCAA5">
+          <div class="decision-title" style="color:var(--green3)">✅ Disetujui Katek — Konfirmasi ke Customer</div>
+          <div style="font-size:11px;color:var(--green3);margin-bottom:8px">Sampaikan hasil pemeriksaan + estimasi biaya ke customer. Input jawaban customer:</div>
+          <div class="fg" style="margin-bottom:8px">
+            <input id="cat-cust-${i}" class="fi" placeholder="Catatan dari customer (opsional)...">
+          </div>
+          <div class="dec-btns">
+            <button class="dec-btn dec-approve" onclick="customerDecisionDash(${i},'lanjut')" style="font-size:12px;padding:12px 8px">✅ Customer Setuju Lanjut Perbaikan</button>
+            <button class="dec-btn dec-tolak" onclick="customerDecisionDash(${i},'stop')" style="font-size:12px;padding:12px 8px">❌ Customer Stop / Tidak Lanjut</button>
+          </div>
+        </div>`:''}
+        ${canLanjutTahap2?`
+        <div class="decision-wrap" style="background:var(--teal2);border:1.5px solid #5DCAA5">
+          <div class="decision-title" style="color:var(--teal3)">✅ Customer Setuju — Siap Kerjakan!</div>
+          <div style="font-size:11px;color:var(--teal3);margin-bottom:10px">Customer sudah konfirmasi lanjut. Klik tombol di bawah untuk mengisi laporan hasil pekerjaan.</div>
+          <button class="dec-btn dec-approve" style="width:100%;padding:12px;font-size:13px" onclick="lanjutTahap2FromDash(${i})">
+            <i class="ti ti-arrow-right"></i> Lanjut ke Form Laporan Hasil (Tahap 2)
+          </button>
+        </div>`:''}
+        ${needRevisi?`
+        <div class="decision-wrap" style="background:var(--amber2);border:1.5px solid #EF9F27">
+          <div class="decision-title" style="color:var(--amber3)">🔄 Perlu Revisi Pemeriksaan</div>
+          <div style="font-size:11px;color:var(--amber3);margin-bottom:8px">Pesan katek: ${j.pesanKatek||'Ulangi pemeriksaan dengan lebih teliti'}</div>
+          <button class="dec-btn dec-revisi" style="width:100%;padding:11px" onclick="ulangiPemeriksaan(${i})">
+            <i class="ti ti-refresh"></i> Ulangi Pemeriksaan
+          </button>
+        </div>`:''}
+      </div>
+      <button class="expand-btn" onclick="toggleJD('jd-${i}',this)">
+        <i class="ti ti-chevron-down"></i><span>Detail & tindakan</span>
+      </button>
+    </div>`;
+  }).join('');
+}
+
+/* ─── Teknisi action dari dashboard ─── */
+function customerDecisionDash(i, decision){
+  const filtered=jobs.filter(j=>{
+    const f=dashFilter;
+    if(f==='semua') return true;
+    if(f.startsWith('unit-')) return j.unit===UNITS.find(u=>u.id===f.replace('unit-',''))?.name;
+    return j.status===f;
+  });
+  const job=filtered[i];
+  if(!job) return;
+  const catatan=document.getElementById('cat-cust-'+i)?.value||'';
+  const status=decision==='lanjut'?'customer-lanjut':'customer-stop';
+  const jobIdx=jobs.indexOf(job);
+  jobs[jobIdx].status=status;
+  jobs[jobIdx].catatanCustomer=catatan;
+  saveJobs();
+  sendToSheets({action:'updateStatus',fno:job.id,status,pesan_katek:'Customer: '+decision+(catatan?' - '+catatan:'')});
+
+  const waKatek=encodeURIComponent('[SIGAP] WO: '+job.id+' - Customer '+(decision==='lanjut'?'SETUJU LANJUT':'STOP/TIDAK LANJUT')+(catatan?' - '+catatan:''));
+  window.open('https://wa.me/'+WA_KATEK+'?text='+waKatek,'_blank');
+  setTimeout(()=>{
+    window.open('https://wa.me/'+WA_OWNER+'?text='+waKatek,'_blank');
+  },1200);
+
+  if(decision==='stop'){
+    alert('Tercatat: Customer memilih tidak melanjutkan perbaikan. Pekerjaan selesai sebagai Diagnosa Only.');
+  }
+  renderDash();
+}
+
+function lanjutTahap2FromDash(i){
+  const filtered=jobs.filter(j=>{
+    const f=dashFilter;
+    if(f==='semua') return true;
+    if(f.startsWith('unit-')) return j.unit===UNITS.find(u=>u.id===f.replace('unit-',''))?.name;
+    return j.status===f;
+  });
+  const job=filtered[i];
+  if(!job) return;
+  if(job.stateSnapshot){
+    S=JSON.parse(JSON.stringify(job.stateSnapshot));
+  }
+  S.tahap=2; S.step=0;
+  navTo('form');
+  renderTahap2();
+}
+
+function ulangiPemeriksaan(i){
+  const filtered=jobs.filter(j=>{
+    const f=dashFilter;
+    if(f==='semua') return true;
+    if(f.startsWith('unit-')) return j.unit===UNITS.find(u=>u.id===f.replace('unit-',''))?.name;
+    return j.status===f;
+  });
+  const job=filtered[i];
+  if(!job) return;
+  if(job.stateSnapshot){
+    S=JSON.parse(JSON.stringify(job.stateSnapshot));
+  }
+  S.tahap=1; S.step=1;
+  navTo('form');
+  renderTahap1();
+}
+
+async function giveDecision(i,decision){
+  const filtered=jobs.filter(j=>{
+    const f=dashFilter;
+    if(f==='semua') return true;
+    if(f.startsWith('unit-')) return j.unit===UNITS.find(u=>u.id===f.replace('unit-',''))?.name;
+    return j.status===f;
+  });
+  const job=filtered[i];
+  if(!job) return;
+
+  const msgEl=document.getElementById('msg-'+i);
+  const pesan=msgEl?msgEl.value.trim():'';
+  const jobIdx=jobs.indexOf(job);
+
+  jobs[jobIdx].status=decision;
+  jobs[jobIdx].keputusan=decision;
+  jobs[jobIdx].pesanKatek=pesan;
+  saveJobs();
+
+  // Kirim ke Sheets
+  sendToSheets({
+    action:'updateStatus',
+    fno:job.id,
+    status:decision,
+    pesan_katek:pesan,
+    timestamp:new Date().toISOString()
+  });
+
+  // WA ke teknisi
+  const decisionLabels={
+    'disetujui':'✅ DISETUJUI — Silakan mulai pekerjaan',
+    'revisi':'🔄 REVISI — Ulangi pemeriksaan',
+    'ditahan':'⏸ DITAHAN — Tunggu instruksi lebih lanjut',
+    'ditolak':'❌ DITOLAK — Hubungi kepala teknisi',
+    'selesai':'✅ SELESAI — Pekerjaan dinyatakan selesai oleh kepala teknisi'
+  };
+  const waMsg=encodeURIComponent(
+    '*[SIGAP — KEPUTUSAN KEPALA TEKNISI]*\n'+
+    'WO: '+job.id+'\n'+
+    'Status: '+decisionLabels[decision]+'\n'+
+    (pesan?'Pesan: '+pesan+'\n':'')+
+    '\n_Login ke SIGAP untuk melihat detail dan melanjutkan pekerjaan_'
+  );
+
+  // WA ke Owner (notifikasi keputusan)
+  const ownerMsg=encodeURIComponent(
+    '*[SIGAP — LAPORAN KEPUTUSAN KATEK]*\n'+
+    'Kepala teknisi baru saja memberikan keputusan:\n'+
+    'WO: '+job.id+'\n'+
+    'Unit: '+job.unit+' — '+job.merk+'\n'+
+    'Teknisi: '+job.teknisi+'\n'+
+    'Customer: '+job.customer+'\n'+
+    'Keputusan: '+decisionLabels[decision]+'\n'+
+    (pesan?'Pesan: '+pesan+'\n':'')+
+    '\n_Buka dashboard SIGAP untuk monitor_'
+  );
+
+  // Buka WA ke teknisi, owner, dan admin (jika approve)
+  const tekWa=job.teknisiWa||'';
+  if(tekWa){
+    window.open('https://wa.me/'+tekWa+'?text='+waMsg,'_blank');
+    setTimeout(()=>window.open('https://wa.me/'+WA_OWNER+'?text='+ownerMsg,'_blank'),1500);
+  } else {
+    window.open('https://wa.me/'+WA_OWNER+'?text='+ownerMsg,'_blank');
+  }
+  // Jika approve, kirim juga ke Admin
+  if(decision==='disetujui'){
+    const adminMsg=sessionStorage.getItem('sigap_admin_msg_'+job.id);
+    if(adminMsg) setTimeout(()=>window.open('https://wa.me/'+WA_ADMIN+'?text='+adminMsg,'_blank'),2500);
+  }
+
+  renderDash();
+}
+
+/* =============================================
+   RIWAYAT
+   ============================================= */
+function renderHist(){
+  const hc=document.getElementById('hist-content');
+  if(!jobs.length){hc.innerHTML='<div class="empty"><i class="ti ti-history"></i><p>Belum ada riwayat</p></div>';return;}
+  const grouped={};
+  jobs.forEach(j=>{
+    const k=j.unit+'|'+j.merk;
+    if(!grouped[k]) grouped[k]={unit:j.unit,merk:j.merk,jobs:[]};
+    grouped[k].jobs.push(j);
+  });
+  let h='';
+  Object.values(grouped).forEach(grp=>{
+    h+=`<div class="hist-item">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="font-size:13px;font-weight:700;color:var(--g9)">${grp.unit} — ${grp.merk}</div>
+        <span class="bdg" style="background:var(--navy);color:#fff">${grp.jobs.length}x service</span>
+      </div>
+      ${grp.jobs.map(j=>`
+        <div style="padding:7px 0;border-top:1px solid var(--g1)">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:11px;font-weight:600;color:var(--g6)">${j.id} · Tahap ${j.tahap||'1'}</div>
+            <span class="bdg" style="background:var(--green2);color:var(--green3);font-size:10px">${j.status}</span>
+          </div>
+          <div style="font-size:11px;color:var(--g5);margin-top:3px">${j.keluhan||'-'}</div>
+          ${j.criticalNotes?`<div style="font-size:10px;color:var(--amber3);margin-top:2px">⚠ ${j.criticalNotes.split(';')[0]}</div>`:''}
+        </div>`).join('')}
+    </div>`;
+  });
+  hc.innerHTML=h;
+}
+
+/* =============================================
+   HELPERS
+   ============================================= */
+function mkCard(icon,title,iconColor){
+  const d=document.createElement('div');
+  d.className='card';
+  d.innerHTML=`<div class="card-hdr"><i class="ti ${icon}" style="color:${iconColor}"></i><span class="card-hdr-t">${title}</span></div><div class="card-body"></div>`;
+  return d;
+}
+
+function updateAppBar(title,sub,icon,iconBg){
+  document.getElementById('ab-title').textContent=title;
+  document.getElementById('ab-sub').textContent=sub;
+  document.getElementById('ab-icon').innerHTML=`<i class="ti ${icon}"></i>`;
+  document.getElementById('ab-icon').style.background=iconBg||'var(--navy2)';
+}
+
+function renderStepDots(steps, cur){
+  const wrap=document.getElementById('step-wrap');
+  wrap.style.display='block';
+  document.getElementById('step-dots').innerHTML=steps.map((_,i)=>`<div class="sdot ${i<cur?'done':i===cur?'active':''}"></div>`).join('');
+  document.getElementById('step-name').textContent=steps[cur]||'';
+  document.getElementById('step-num').textContent=(cur+1)+' / '+steps.length;
+}
+
+function addNavBtns(fc, showBack, onBack, onNext, fullWidth){
+  const nav=document.createElement('div');
+  nav.className='nav-row';
+  if(showBack){
+    const pb=document.createElement('button');
+    pb.className='btn-back';
+    pb.innerHTML='<i class="ti ti-arrow-left"></i> Kembali';
+    pb.onclick=onBack;
+    nav.appendChild(pb);
+  }
+  const nb=document.createElement('button');
+  nb.className='btn-next';
+  nb.style.gridColumn=(!showBack||fullWidth)?'1/-1':'';
+  nb.innerHTML='Lanjut <i class="ti ti-arrow-right"></i>';
+  nb.onclick=onNext;
+  nav.appendChild(nb);
+  fc.appendChild(nav);
+}
+
+function toggleCI(id){
+  const cb=document.getElementById('ck-'+id);
+  if(!cb) return;
+  cb.checked=!cb.checked;
+  document.getElementById('ci-'+id)?.classList.toggle('on',cb.checked);
+}
+
+function setCond(key,val){
+  S.chk[key]=val;
+  const item=document.querySelector('[onclick*="'+key+'"]')?.closest('.cond-item');
+  if(!item) return;
+  item.querySelectorAll('.cb').forEach(b=>{
+    b.className='cb';
+    const fn=b.getAttribute('onclick')||'';
+    if(fn.includes("'ok'")&&val==='ok') b.className='cb ok';
+    else if(fn.includes("'warn'")&&val==='warn') b.className='cb warn';
+    else if(fn.includes("'bad'")&&val==='bad') b.className='cb bad';
+  });
+}
+
+function setMS(key,val){
+  S.mStatus[key]=val;
+  const ok=document.querySelector('[onclick="setMS(\''+key+'\',\'ok\')"]');
+  const ng=document.querySelector('[onclick="setMS(\''+key+'\',\'ng\')"]');
+  if(ok) ok.className='ms'+(val==='ok'?' ok':'');
+  if(ng) ng.className='ms'+(val==='ng'?' ng':'');
+  const mr=ok?.closest('.mr');
+  if(mr) mr.classList.toggle('mr-ng',val==='ng');
+}
+
+function togglePenyebab(i){
+  const idx=S.penyebab.indexOf(i);
+  if(idx>-1) S.penyebab.splice(idx,1); else S.penyebab.push(i);
+  const ci=document.getElementById('ci-p'+i);
+  if(ci){ci.classList.toggle('on',S.penyebab.includes(i));const cb=ci.querySelector('input');if(cb)cb.checked=S.penyebab.includes(i);}
+}
+
+function toggleTindakan(i){
+  const idx=S.tindakan.indexOf(i);
+  if(idx>-1) S.tindakan.splice(idx,1); else S.tindakan.push(i);
+  const ci=document.getElementById('ci-t'+i);
+  if(ci) ci.classList.toggle('on',S.tindakan.includes(i));
+}
+
+function toggleCritical(i){
+  const idx=S.critical.indexOf(i);
+  if(idx>-1) S.critical.splice(idx,1); else S.critical.push(i);
+}
+
+function setConf(v,tc){
+  S.confidence=v;
+  document.querySelectorAll('[id^=conf-]').forEach(el=>{
+    const myV=el.id.replace('conf-','');
+    el.classList.toggle('sel',myV===v);
+    el.style.borderColor=myV===v?tc:'transparent';
+  });
+}
+
+function addPhoto(key,input){
+  if(!input.files[0]) return;
+  const reader=new FileReader();
+  reader.onload=e=>{S.photos[key]=e.target.result;renderTahap1();};
+  reader.readAsDataURL(input.files[0]);
+}
+
+function delPhoto(key){delete S.photos[key];}
+
+const FD_IDS=['f-cust-nama','f-cust-telp','f-cust-tipe','f-cust-area','f-cust-alamat','f-rekomen-awal','f-est-biaya','f-est-waktu',
+  'f-unit-merk','f-unit-model','f-unit-kap','f-unit-tahun','f-unit-sn','f-unit-lokasi',
+  'f-unit-last-svc','f-unit-last-tek','f-tek-nama','f-tek-wa',
+  'f-keluhan-catatan','f-urgensi','f-risk','f-gejala','f-catatan-t1',
+  'f-penyebab-detail','f-tindakan-lain','f-sparepart','f-jasa','f-part',
+  'f-waktu','f-status-akhir','f-critical-lain','f-rekomendasi','f-catatan-tek'];
+
+function saveFD(){
+  FD_IDS.forEach(id=>{const el=document.getElementById(id);if(el)S.fd[id]=el.value;});
+  for(let i=0;i<20;i++){
+    const mb=document.getElementById('mb-'+i);if(mb)S.mVals['mb-'+i]=mb.value;
+    const ma=document.getElementById('ma-'+i);if(ma)S.mVals['ma-'+i]=ma.value;
+  }
+  // Keluhan
+  const ud=UNIT_DATA[S.unit];
+  if(ud){
+    const kel=[];
+    (ud.keluhan||[]).forEach((k,i)=>{const cb=document.getElementById('ck-k'+i);if(cb&&cb.checked)kel.push(k);});
+    if(kel.length)S.fd['_keluhan']=kel.join(', ');
+  }
+}
+
+function restoreFD(){
+  setTimeout(()=>{
+    FD_IDS.forEach(id=>{if(S.fd[id]!==undefined){const el=document.getElementById(id);if(el)el.value=S.fd[id];}});
+    for(let i=0;i<20;i++){
+      if(S.mVals['mb-'+i]){const el=document.getElementById('mb-'+i);if(el)el.value=S.mVals['mb-'+i];}
+      if(S.mVals['ma-'+i]){const el=document.getElementById('ma-'+i);if(el)el.value=S.mVals['ma-'+i];}
+    }
+    const ud=UNIT_DATA[S.unit];
+    if(ud&&S.fd['_keluhan']){
+      (ud.keluhan||[]).forEach((k,i)=>{
+        if(S.fd['_keluhan'].includes(k)){const cb=document.getElementById('ck-k'+i);if(cb){cb.checked=true;document.getElementById('ci-k'+i)?.classList.add('on');}}
+      });
+    }
+    Object.entries(S.chk).forEach(([key,val])=>{setTimeout(()=>setCond(key,val),10);});
+  },40);
+}
+
+function resetForm(){
+  S={unit:null,jobType:null,tahap:1,step:0,fd:{},chk:{},mVals:{},mStatus:{},tindakan:[],confidence:null,critical:[],penyebab:[],photos:{},wo_id:''};
+  document.getElementById('step-wrap').style.display='none';
+  updateAppBar('SIGAP Intelligence','Pilih unit','ti-tool','var(--navy2)');
+  renderUnitSelect();
+}
+
+function toggleJD(id,btn){
+  const el=document.getElementById(id);if(!el)return;
+  el.classList.toggle('open');
+  const ic=btn.querySelector('i');const sp=btn.querySelector('span');
+  if(el.classList.contains('open')){ic.className='ti ti-chevron-up';sp.textContent='Tutup';}
+  else{ic.className='ti ti-chevron-down';sp.textContent='Detail & tindakan';}
+}
+
+/* =============================================
+   DATA / STORAGE
+   ============================================= */
+function saveJobs(){try{sessionStorage.setItem('sigap_v4_jobs',JSON.stringify(jobs));}catch(e){}}
+function loadJobs(){try{const d=sessionStorage.getItem('sigap_v4_jobs');if(d)jobs=JSON.parse(d);}catch(e){}}
+
+function sendToSheets(payload){
+  try{
+    const cbName='sigap_send_'+Date.now();
+    const encoded=btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    const script=document.createElement('script');
+    const to=setTimeout(()=>{delete window[cbName];try{document.body.removeChild(script);}catch(e){}},10000);
+    window[cbName]=function(resp){clearTimeout(to);delete window[cbName];try{document.body.removeChild(script);}catch(e){};console.log('Saved:',resp);};
+    script.src=GAS_URL+'?action=save&callback='+cbName+'&d='+encoded;
+    script.onerror=()=>{clearTimeout(to);try{document.body.removeChild(script);}catch(e){}};
+    document.body.appendChild(script);
+  }catch(e){console.error('Send error:',e);}
+}
+
+function fetchFromSheets(){
+  return new Promise(resolve=>{
+    const cbName='sigap_fetch_'+Date.now();
+    const script=document.createElement('script');
+    const to=setTimeout(()=>{delete window[cbName];try{document.body.removeChild(script);}catch(e){}resolve();},8000);
+    window[cbName]=function(data){
+      clearTimeout(to);delete window[cbName];try{document.body.removeChild(script);}catch(e){};
+      if(data?.jobs?.length){
+        const ids=data.jobs.map(j=>j.id);
+        const local=jobs.filter(j=>!ids.includes(j.id));
+        jobs=[...data.jobs,...local];saveJobs();
+      }
+      resolve();
+    };
+    script.src=GAS_URL+'?action=getJobs&callback='+cbName;
+    script.onerror=()=>{clearTimeout(to);resolve();};
+    document.body.appendChild(script);
+  });
+}
+
+/* =============================================
+   TAMBAH UNIT BARU
+   ============================================= */
+function renderAddUnit(){
+  const uc=document.getElementById('unit-content');
+  uc.innerHTML=`
+    <div class="card anim">
+      <div class="card-hdr"><i class="ti ti-plus" style="color:var(--teal)"></i><span class="card-hdr-t">Tambah Unit Elektronik Baru</span></div>
+      <div class="card-body">
+        <div class="info-bar" style="margin-bottom:0"><i class="ti ti-info-circle" style="flex-shrink:0"></i>
+          <span>Unit baru akan tersimpan di perangkat ini dan muncul di pilihan form.</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><i class="ti ti-cpu" style="color:var(--blue)"></i><span class="card-hdr-t">Identitas unit</span></div>
+      <div class="card-body">
+        <div class="frow">
+          <div class="fg"><div class="fl fl-req">Nama unit</div><input class="fi" id="nu-name" placeholder="Contoh: Microwave"></div>
+          <div class="fg"><div class="fl fl-req">ID unik</div><input class="fi" id="nu-id" placeholder="Contoh: microwave"></div>
+        </div>
+        <div class="fg"><div class="fl">Sub-keterangan</div><input class="fi" id="nu-sub" placeholder="Contoh: Microwave & oven listrik"></div>
+        <div class="fg"><div class="fl">Teks peringatan keselamatan</div>
+          <textarea class="fta" id="nu-safety" rows="2" placeholder="Cabut steker sebelum membuka unit..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><i class="ti ti-list" style="color:var(--teal)"></i><span class="card-hdr-t">Keluhan customer (1 per baris)</span></div>
+      <div class="card-body">
+        <textarea class="fta" id="nu-keluhan" rows="5" placeholder="Tidak menyala\nTidak panas\nBunyi aneh\nError code"></textarea>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><i class="ti ti-eye" style="color:var(--teal)"></i><span class="card-hdr-t">Kondisi fisik (1 per baris)</span></div>
+      <div class="card-body">
+        <textarea class="fta" id="nu-fisik" rows="4" placeholder="Kabel power\nKondisi body\nTombol/panel"></textarea>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><i class="ti ti-cpu" style="color:var(--teal)"></i><span class="card-hdr-t">Kondisi teknis (1 per baris)</span></div>
+      <div class="card-body">
+        <textarea class="fta" id="nu-teknis" rows="4" placeholder="Elemen pemanas\nThermostat\nPCB\nMotor"></textarea>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><i class="ti ti-bolt" style="color:var(--amber)"></i><span class="card-hdr-t">Parameter pengukuran</span></div>
+      <div class="card-body">
+        <div class="info-bar" style="margin-bottom:6px"><i class="ti ti-info-circle" style="flex-shrink:0"></i>
+          <span>Format tiap baris: <b>Nama | Nilai Normal | Satuan | wajib/opsional</b></span>
+        </div>
+        <div style="background:var(--g0);border-radius:var(--rsm);padding:8px;font-size:11px;color:var(--g4);margin-bottom:6px">
+          Contoh:<br>
+          Tegangan input | 198-242 V | V | wajib<br>
+          Arus running | Sesuai nameplate | A | wajib<br>
+          Suhu operasi | 50-80 C | C | opsional
+        </div>
+        <textarea class="fta" id="nu-measures" rows="7" placeholder="Tegangan input | 198-242 V | V | wajib\nArus running | Sesuai nameplate | A | wajib\nSuhu operasi | 50-80 C | C | opsional"></textarea>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><i class="ti ti-tool" style="color:var(--teal)"></i><span class="card-hdr-t">Tindakan service (1 per baris)</span></div>
+      <div class="card-body">
+        <textarea class="fta" id="nu-tindakan" rows="4" placeholder="Ganti elemen\nGanti thermostat\nBersihkan komponen\nRekomendasi ganti unit"></textarea>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><i class="ti ti-alert-triangle" style="color:var(--amber)"></i><span class="card-hdr-t">Critical notes (1 per baris)</span></div>
+      <div class="card-body">
+        <textarea class="fta" id="nu-critical" rows="3" placeholder="Area listrik berisiko\nUnit sering bermasalah\nCustomer sensitif harga"></textarea>
+      </div>
+    </div>
+    <button onclick="saveNewUnit()" style="width:100%;background:var(--teal);border:none;border-radius:var(--rlg);padding:13px;font-size:14px;font-weight:700;cursor:pointer;color:#fff;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:7px;margin-top:4px">
+      <i class="ti ti-device-floppy"></i> Simpan Unit Baru
+    </button>
+    <div style="padding-bottom:70px"></div>`;
+}
+
+function saveNewUnit(){
+  const name=document.getElementById('nu-name').value.trim();
+  const id=document.getElementById('nu-id').value.trim().toLowerCase().replace(/\s+/g,'-');
+  if(!name||!id){alert('Nama unit dan ID wajib diisi!');return;}
+
+  const parseLines=(elId)=>document.getElementById(elId).value.split('
+').map(s=>s.trim()).filter(Boolean);
+
+  const measures=parseLines('nu-measures').map(line=>{
+    const parts=line.split('|').map(s=>s.trim());
+    return {l:parts[0]||line, n:parts[1]||'', u:parts[2]||'', wajib:(parts[3]||'').toLowerCase().includes('wajib')};
+  });
+
+  const newUnitData={
+    safety:{level:'warn', text:document.getElementById('nu-safety').value.trim()||'Cabut steker sebelum membuka unit.'},
+    keluhan:parseLines('nu-keluhan'),
+    kondisi_fisik:parseLines('nu-fisik'),
+    kondisi_teknis:parseLines('nu-teknis'),
+    gejala:[],
+    tindakan_service:parseLines('nu-tindakan'),
+    tindakan_diagnosa:['Pengecekan visual','Pengukuran parameter','Identifikasi masalah'],
+    measures:measures,
+    critical:parseLines('nu-critical'),
+    photos_t1:['Before','Nameplate','Area masalah'],
+    photos_t2:['After','Komponen diganti','Hasil akhir']
+  };
+
+  // Tambah ke UNITS jika belum ada
+  if(!UNITS.find(u=>u.id===id)){
+    UNITS.push({id, name, sub:document.getElementById('nu-sub').value.trim()||name, icon:'ti-tool', color:'#185FA5', bg:'#E6F1FB'});
+    JOB_TYPES[id]=[
+      {id:'service', name:'Service / Perbaikan', desc:'Diagnosa & perbaikan', icon:'ti-tool'},
+      {id:'diagnosa', name:'Pengecekan', desc:'Pemeriksaan rutin', icon:'ti-stethoscope'},
+    ];
+  }
+
+  // Simpan ke sessionStorage
+  try{
+    const existing=JSON.parse(sessionStorage.getItem('sigap_custom_units')||'{}');
+    existing[id]=newUnitData;
+    sessionStorage.setItem('sigap_custom_units',JSON.stringify(existing));
+    UNIT_DATA[id]=newUnitData;
+  }catch(e){console.error(e);}
+
+  alert('Unit "'+name+'" berhasil ditambahkan! Sekarang tersedia di pilihan form.');
+  navTo('form');
+  renderUnitSelect();
+}
+
+/* =============================================
+   INIT
+   ============================================= */
+// PIN login handler
+document.getElementById('pin-input').addEventListener('keyup',e=>{if(e.key==='Enter')doLogin();});
+</script>
+</body>
+</html>
